@@ -32,6 +32,7 @@ namespace mvc_in_memory_data_store.Controllers
                 return Results.Problem(ex.Message);
             }
         }
+
         [HttpGet]
         public async Task<IResult> GetAllProducts()
         {
@@ -44,13 +45,34 @@ namespace mvc_in_memory_data_store.Controllers
                 return Results.Problem(ex.Message);
             }
         }
-        [HttpPut]
-        public async Task<IResult> Put(Product book)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IResult> GetAProduct(int id)
         {
             try
             {
-                if (_productRepository.AddProduct(book)) return Results.Ok();
-                return Results.NotFound();
+                var result = _productRepository.GetById(id);
+                return result!=null ? Results.Ok(result) : Results.NotFound();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+        [HttpPut]
+        [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+
+        public async Task<IResult> ChangeAProduct(int id,Product product)
+        {
+            try
+            {
+                return _productRepository.ChangeById(id, product)
+                    ? Results.Created($"https://localhost:7241/Product{product.id}", product)
+                    : Results.NotFound();
+
+                //if (_productRepository.AddProduct(product)) return Results.Ok();
+                //return Results.NotFound();
 
             }
             catch (Exception ex)
