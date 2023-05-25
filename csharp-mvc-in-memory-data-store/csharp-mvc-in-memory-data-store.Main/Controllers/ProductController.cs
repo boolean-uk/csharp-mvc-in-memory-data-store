@@ -55,5 +55,42 @@ namespace mvc_in_memory_data_store.Controllers
                 return Results.Problem(ex.Message);
             }
         }
+
+        [HttpPut("{Id}")]
+        public IResult Put(Guid Id, ProductRequest product) 
+        {
+            try
+            {
+               var newProduct = _productRepository.UpdateProduct(Id, product.Name, product.Category, product.Price);
+                if (newProduct != null)
+                {
+                    return Results.Ok(newProduct);
+                }
+                return Results.NotFound();
+                
+            }
+            catch (Exception ex) 
+            { 
+                return Results.Problem(ex.Message);
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        public IActionResult Delete(Guid Id)
+        {
+            try
+            {
+                if (_productRepository.Delete(Id))
+                {
+                    return Ok();
+
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

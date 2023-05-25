@@ -7,8 +7,7 @@ namespace mvc_in_memory_data_store.Data
         Product Create(string name, string category, decimal price);
         List<Product> GetAll();
         Product Get(Guid id);
-        bool Add(Product product);
-        Product UpdateProduct(Product product);
+        Product UpdateProduct(Guid id, string name, string category, decimal price);
         bool Delete(Guid id);
 
     }

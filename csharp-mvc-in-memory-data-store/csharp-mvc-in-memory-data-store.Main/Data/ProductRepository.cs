@@ -1,4 +1,5 @@
-﻿using mvc_in_memory_data_store.Models;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using mvc_in_memory_data_store.Models;
 
 namespace mvc_in_memory_data_store.Data
 {
@@ -26,44 +27,36 @@ namespace mvc_in_memory_data_store.Data
         }
 
 
-
-
-
-
-
-        public bool Add(Product product)
+        public Product UpdateProduct(Guid id, string name, string category, decimal price)
         {
-            if (product != null)
+            if(_products.Any(x => x.Id == id))
             {
-                _products.Add(product);
-                return true;
-
+                var p = _products.SingleOrDefault(x =>  x.Id == id);
+                if(p != null)
+                {
+                    p.Name = name;
+                    p.Category = category;
+                    p.Price = price;
+                    return p;
+                }
             }
-            return false;
+            return null;
         }
 
 
-
-     
+        
         public bool Delete(Guid id)
         {
-            throw new NotImplementedException();
+            if (_products.Any(x => x.Id == id))
+            {
+                _products.RemoveAll(x => x.Id == id);
+                return true;
+            }
+            return false;
+            
         }
 
-        public Product Find(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Product UpdateProduct(Product product)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Product> FindAll()
-        {
-            throw new NotImplementedException();
-        }
+        
 
        
 
