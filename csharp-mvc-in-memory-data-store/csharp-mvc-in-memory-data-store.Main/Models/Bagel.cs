@@ -2,30 +2,19 @@
 {
     public class Bagel
     {
-        private int id;
-        private String type;
-        private int price;
+        private int _id;
+        private string _type;
+        private int _price;
 
-        public Bagel(int id, String type, int price)
+        public Bagel(int id, string type, int price)
         {
             this.id = id;
             this.type = type;
             this.price = price;
         }
-
-        public int getId()
-        {
-            return this.id;
-        }
-
-        public String getType()
-        {
-            return this.type;
-        }
-
-        public int getPrice()
-        {
-            return this.price;
-        }
+        
+        public int id { get { return _id; } set { _id = value; } }
+        public string type { get { return _type; } set { _type = value; } }
+        public int price { get { return _price; } set { _price = value; } }
     }
 }
