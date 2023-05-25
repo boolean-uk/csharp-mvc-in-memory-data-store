@@ -13,17 +13,17 @@
             this.price = price;
         }
 
-        public int getId()
+        public int GetId()
         {
             return this.id;
         }
 
-        public String getType()
+        public String GetType()
         {
             return this.type;
         }
 
-        public int getPrice()
+        public int GetPrice()
         {
             return this.price;
         }
