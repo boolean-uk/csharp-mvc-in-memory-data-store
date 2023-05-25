@@ -1,4 +1,6 @@
-﻿namespace mvc_in_memory_data_store.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace mvc_in_memory_data_store.Models
 {
     public class Bagel
     {

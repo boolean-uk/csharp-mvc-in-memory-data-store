@@ -25,7 +25,7 @@ namespace mvc_in_memory_data_store.Controllers
                 var bagel = _bagelRepository.Create(bagelType, price);
                 if (bagel != null)
                 {
-                    return Results.Ok(bagel);
+                    return Results.Created($"https://localhost:7241/bagels/{bagel.Id}",bagel);
                 }
                 else
                 {
@@ -57,21 +57,15 @@ namespace mvc_in_memory_data_store.Controllers
             try
             {
                 var bagel = _bagelRepository.Find(id);
-                if (bagel != null)
-                {
-                    return Results.Ok(bagel);
-                }
-                else
-                {
-                    return Results.Problem($"There no bagel with id: {id}");
-                }
+                return bagel != null ? Results.Ok(bagel) : Results.Problem($"There no bagel with id: {id}");
             } catch (Exception ex)
             {
                 return Results.Problem(ex.Message);
             }
         }
 
-        [HttpPut]
+        [HttpPost]
+        [Route("add")]
         public async Task<IResult> AddBagel(Bagel bagel)
         {
             try
@@ -93,11 +87,7 @@ namespace mvc_in_memory_data_store.Controllers
             try
             {
                 var bagel = _bagelRepository.Update(id, bagelType, price);
-                if (bagel != null)
-                {
-                    return Results.Ok(bagel);
-                }
-                return Results.Problem($"There no bagel with id: {id}");
+                return bagel != null ? Results.Ok(bagel) : Results.Problem($"There no bagel with id: {id}");
             } catch (Exception ex)
             {
                 return Results.Problem(ex.Message);
