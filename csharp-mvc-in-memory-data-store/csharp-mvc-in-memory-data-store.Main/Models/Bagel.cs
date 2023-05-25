@@ -1,9 +1,12 @@
-﻿namespace mvc_in_memory_data_store.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace mvc_in_memory_data_store.Models
 {
     public class Bagel
     {
+        
         private int id;
-        private String type;
+        private string type;
         private int price;
 
         public Bagel(int id, String type, int price)
@@ -12,20 +15,12 @@
             this.type = type;
             this.price = price;
         }
-
-        public int getId()
-        {
-            return this.id;
-        }
-
-        public String getType()
-        {
-            return this.type;
-        }
-
-        public int getPrice()
-        {
-            return this.price;
-        }
+        [Required]
+        public int Id { get { return id; } set { id = value; } }
+        [Required]
+        public string Type { get { return type; } set { type = value; } }
+        [Required]
+        public int Price { get { return price;} set { price = value; } }
+    
     }
 }
