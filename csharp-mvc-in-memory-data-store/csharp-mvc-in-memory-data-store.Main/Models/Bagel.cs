@@ -3,29 +3,18 @@
     public class Bagel
     {
         private int id;
-        private String type;
+        private string bagelType;
         private int price;
 
-        public Bagel(int id, String type, int price)
+        public Bagel(int id, string bagelType, int price)
         {
             this.id = id;
-            this.type = type;
+            this.bagelType = bagelType;
             this.price = price;
         }
 
-        public int getId()
-        {
-            return this.id;
-        }
-
-        public String getType()
-        {
-            return this.type;
-        }
-
-        public int getPrice()
-        {
-            return this.price;
-        }
+        public int Id { get => this.id; set => this.id = value; }
+        public string BagelType { get => this.bagelType; set => this.bagelType = value; }
+        public int Price { get=> this.price; set => this.price = value; }
     }
 }

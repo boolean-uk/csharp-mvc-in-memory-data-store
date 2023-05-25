@@ -7,7 +7,7 @@ using System;
 
 namespace mvc_in_memory_data_store.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("bagels")]
     [ApiController]
     public class BagelsController : ControllerBase
     {
@@ -16,20 +16,63 @@ namespace mvc_in_memory_data_store.Controllers
         {
             _bagelRepository = bagelRepository;
         }
+
+        [HttpPost]
+        public async Task<IResult> CreateBagel(string bagelType, int price)
+        {
+            try
+            {
+                var bagel = _bagelRepository.Create(bagelType, price);
+                if (bagel != null)
+                {
+                    return Results.Ok(bagel);
+                }
+                else
+                {
+                    return Results.Problem("Not enough information in order to be created");
+                }
+            } catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<IResult> Get()
         {
             try
-            {                
-                return Results.Ok(_bagelRepository.findAll());
+            {
+                return Results.Ok(_bagelRepository.FindAll());
             }
             catch (Exception ex)
             {
                 return Results.Problem(ex.Message);
             }
         }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IResult> GetBagel(int id)
+        {
+            try
+            {
+                var bagel = _bagelRepository.Find(id);
+                if (bagel != null)
+                {
+                    return Results.Ok(bagel);
+                }
+                else
+                {
+                    return Results.Problem($"There no bagel with id: {id}");
+                }
+            } catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
         [HttpPut]
-        public async Task<IResult> Put(Bagel bagel)
+        public async Task<IResult> AddBagel(Bagel bagel)
         {
             try
             {
@@ -38,6 +81,39 @@ namespace mvc_in_memory_data_store.Controllers
 
             }
             catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IResult> UpdateBagel(int id, string? bagelType, int? price)
+        {
+            try
+            {
+                var bagel = _bagelRepository.Update(id, bagelType, price);
+                if (bagel != null)
+                {
+                    return Results.Ok(bagel);
+                }
+                return Results.Problem($"There no bagel with id: {id}");
+            } catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IResult> Delete(int id)
+        {
+            try
+            {
+                if (_bagelRepository.Delete(id)) return Results.Ok();
+                return Results.Problem($"There no bagel with id: {id}");
+
+            } catch (Exception ex)
             {
                 return Results.Problem(ex.Message);
             }

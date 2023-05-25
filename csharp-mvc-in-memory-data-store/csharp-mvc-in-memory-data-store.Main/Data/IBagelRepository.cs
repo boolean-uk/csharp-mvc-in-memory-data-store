@@ -4,9 +4,11 @@ namespace mvc_in_memory_data_store.Data
 {
     public interface IBagelRepository
     {
-        void create(String type, int price);       
-        List<Bagel> findAll();     
-        Bagel find(int id);
+        Bagel Create(string bagelType, int price);       
+        List<Bagel> FindAll();     
+        Bagel Find(int id);
         bool Add(Bagel bagel);
+        bool Delete(int id);
+        Bagel Update(int id, string? bagelType, int? price);
     }
 }

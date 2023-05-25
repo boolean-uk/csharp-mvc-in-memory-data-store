@@ -8,28 +8,63 @@ namespace mvc_in_memory_data_store.Models
         private static int IdCounter = 1;
         private static List<Bagel> _bagels = new List<Bagel>();
 
-        public void create(String type, int price)
+        public Bagel Create(string type, int price)
         {
-            Bagel bagel = new Bagel(BagelRepository.IdCounter++, type, price);
-            BagelRepository._bagels.Add(bagel);
+            Bagel bagel = new Bagel(IdCounter++, type, price);
+            _bagels.Add(bagel);
+            return bagel;
         }
 
-        public List<Bagel> findAll()
+        public List<Bagel> FindAll()
         {
-            return BagelRepository._bagels;
-            
+            return _bagels;
         }
 
-        public Bagel find(int id)
+        public Bagel Find(int id)
         {
-            return BagelRepository._bagels.First(bagel => bagel.getId() == id);
+            return _bagels.SingleOrDefault(x => x.Id == id);
         }
 
         public bool Add(Bagel bagel)
         {
             if (bagel != null)
             {
+                bagel.Id = IdCounter;
+                IdCounter++;
                 _bagels.Add(bagel);
+                return true;
+            }
+            return false;
+        }
+
+        public Bagel Update(int id, string? bagelType, int? price)
+        {
+            var bagel = _bagels.SingleOrDefault(x => x.Id == id);
+            if (bagel != null)
+            {
+                if (!string.IsNullOrEmpty(bagelType))
+                {
+                    bagel.BagelType = bagelType;
+                }
+                if (!string.IsNullOrEmpty(price.ToString()))
+                {
+                    bagel.Price = (int)price;
+                }
+                return bagel;
+            }
+            else
+            {
+                return bagel;
+            }
+            
+        }
+
+        public bool Delete(int id)
+        {
+            var bagel = _bagels.SingleOrDefault(x => x.Id == id);
+            if (bagel != null)
+            {
+                _bagels.Remove(bagel);
                 return true;
             }
             return false;
