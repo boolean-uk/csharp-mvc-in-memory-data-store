@@ -7,7 +7,8 @@ namespace mvc_in_memory_data_store.Data
         //void create(string name,string category, int price);       
         List<Product> GetAll();     
         Product GetById(int id);
-        bool AddProduct(Product book);
-        bool ChangeById(int id, Product book);
+        bool AddProduct(Product product);
+        bool ChangeById(int id, Product product);
+        bool RemoveById(int id);
     }
 }

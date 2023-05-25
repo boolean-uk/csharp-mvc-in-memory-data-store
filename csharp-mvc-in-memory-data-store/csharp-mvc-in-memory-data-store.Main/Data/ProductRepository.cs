@@ -55,10 +55,24 @@ namespace mvc_in_memory_data_store.Models
                 }
                 return true;
             } return false;
-            //  zorgen dat je niet alles hoef in te vullen maar alleen wat je wilt veranderen??
+            // zorgen dat je niet alles hoef in te vullen maar alleen wat je wilt veranderen??
             //var result = ProductRepository._products.FirstOrDefault(p => p.id == id);
             //_products.Remove(product);
             //return result;
+        }
+
+        public bool RemoveById(int id)
+        {
+            if (_products.Any(x => x.id == id))
+            {
+                var p = _products.FirstOrDefault(i => i.id==id);
+                if (p != null)
+                {
+                    _products.Remove(p);
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

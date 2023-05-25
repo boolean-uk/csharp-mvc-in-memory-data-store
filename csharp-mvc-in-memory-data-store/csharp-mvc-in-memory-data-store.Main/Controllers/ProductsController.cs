@@ -80,5 +80,20 @@ namespace mvc_in_memory_data_store.Controllers
                 return Results.Problem(ex.Message);
             }
         }
+        [HttpDelete]
+        [Route("{id}")]
+
+        public async Task<IResult> DeleteProduct(int id)
+        {
+            try
+            {
+                return _productRepository.RemoveById(id) ? Results.Ok() : Results.NotFound();
+            //ok message is not yet working need to display item thats removed
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
     }
 }
