@@ -22,7 +22,7 @@ namespace mvc_in_memory_data_store.Models
 
         public Bagel find(int id)
         {
-            return BagelRepository._bagels.First(bagel => bagel.getId() == id);
+            return BagelRepository._bagels.First(bagel => bagel.GetId() == id);
         }
 
         public bool Add(Bagel bagel)
