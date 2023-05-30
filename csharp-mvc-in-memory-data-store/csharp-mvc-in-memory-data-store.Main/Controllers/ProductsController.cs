@@ -82,6 +82,7 @@ namespace mvc_in_memory_data_store.Controllers
         }
         [HttpDelete]
         [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
 
         public async Task<IResult> DeleteProduct(int id)
         {
