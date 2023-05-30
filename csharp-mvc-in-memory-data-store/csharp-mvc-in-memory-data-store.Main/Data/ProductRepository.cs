@@ -61,7 +61,7 @@ namespace mvc_in_memory_data_store.Models
             //return result;
         }
 
-        public bool RemoveById(int id)
+        public Product RemoveById(int id)
         {
             if (_products.Any(x => x.id == id))
             {
@@ -70,9 +70,9 @@ namespace mvc_in_memory_data_store.Models
                 {
                     _products.Remove(p);
                 }
-                return true;
+                return p;
             }
-            return false;
+            return null;
         }
     }
 }

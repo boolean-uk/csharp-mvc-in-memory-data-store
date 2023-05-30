@@ -87,8 +87,11 @@ namespace mvc_in_memory_data_store.Controllers
         {
             try
             {
-                return _productRepository.RemoveById(id) ? Results.Ok() : Results.NotFound();
+                var p = _productRepository.RemoveById(id);
+                return p != null ? Results.Ok(p) : Results.NotFound();
             //ok message is not yet working need to display item thats removed
+            // make a copy of the product you want to remove and return this
+            // change bool to something else
             }
             catch (Exception ex)
             {
