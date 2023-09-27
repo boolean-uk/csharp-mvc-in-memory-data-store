@@ -17,6 +17,7 @@ namespace mvc_in_memory_data_store.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Post([FromBody] Product product)
         {
@@ -55,6 +56,7 @@ namespace mvc_in_memory_data_store.Controllers
         // GET /products/{id} to retrieve a specific product by ID
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Get(int id)
