@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Controllers\BagelsController.cs.exclude" />
+    <Compile Include="Controllers\ProductsController.cs.exclude" />
   </ItemGroup>
 
   <ItemGroup>
