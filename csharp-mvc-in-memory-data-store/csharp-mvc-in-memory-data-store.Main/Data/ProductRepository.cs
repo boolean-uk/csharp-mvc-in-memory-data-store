@@ -38,5 +38,10 @@ namespace mvc_in_memory_data_store.Models
             return true;
         }
 
+        public bool Delete(Product product)
+        {
+            return _products.Remove(product);
+        }
+
     }
 }

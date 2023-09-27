@@ -115,5 +115,31 @@ namespace mvc_in_memory_data_store.Controllers
                 return Results.Problem(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Remove a product from list of products
+        /// </summary>
+        /// <param name="id">id of product to be deleted</param>
+        /// <returns>Deleted product</returns>
+        [HttpDelete]
+        [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IResult> DeleteProduct(int id)
+        {
+            try
+            {
+                var product = _productRepository.FindById(id);
+                if (product == null)
+                    return Results.NotFound("Product not found.");
+                if (_productRepository.Delete(product))
+                    Results.Ok(product);
+                return Results.NotFound("Product not found.");
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
     }
 }

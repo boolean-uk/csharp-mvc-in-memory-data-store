@@ -9,5 +9,6 @@ namespace mvc_in_memory_data_store.Data
         Product FindById(int id);
         Product FindByName(string name);
         bool Add(Product product);
+        bool Delete(Product product);
     }
 }
