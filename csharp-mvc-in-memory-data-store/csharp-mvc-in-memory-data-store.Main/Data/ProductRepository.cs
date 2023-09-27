@@ -24,6 +24,11 @@ namespace mvc_in_memory_data_store.Models
             return _products.FirstOrDefault(product => product.Id == id);
         }
 
+        public Product FindByName(string name)
+        {
+            return _products.FirstOrDefault(product => product.Name == name);
+        }
+
         public bool Add(Product product)
         {
             if (product == null)

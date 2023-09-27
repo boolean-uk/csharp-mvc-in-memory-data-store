@@ -7,6 +7,7 @@ namespace mvc_in_memory_data_store.Data
         void Create(string name, string category, int price);       
         List<Product> FindAll();     
         Product FindById(int id);
+        Product FindByName(string name);
         bool Add(Product product);
     }
 }
