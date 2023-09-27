@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using mvc_in_memory_data_store.Data;
+using mvc_in_memory_data_store.DTOs;
 using mvc_in_memory_data_store.Models;
 
 namespace mvc_in_memory_data_store.Controllers
@@ -19,17 +20,24 @@ namespace mvc_in_memory_data_store.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IResult> Post([FromBody] Product product)
+        public async Task<IResult> Post([FromBody] ProductInput productInput)
         {
             if (!ModelState.IsValid)
             {
                 return Results.BadRequest(ModelState); // return validation errors
             }
 
-            if (_productRepository.ProductNameExists(product.Name))
+            if (_productRepository.ProductNameExists(productInput.Name))
             {
                 return Results.BadRequest("A product with this name already exists.");
             }
+
+            var product = new Product // to convert dto to product model
+            {
+                Name = productInput.Name,
+                Category = productInput.Category,
+                Price = productInput.Price
+            };
 
             try
             {
