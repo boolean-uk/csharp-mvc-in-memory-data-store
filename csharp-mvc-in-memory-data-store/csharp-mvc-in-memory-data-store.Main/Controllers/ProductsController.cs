@@ -20,6 +20,7 @@ namespace mvc_in_memory_data_store.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("findAllProducts")]
         public async Task<IResult> GetProduct()
         {
@@ -29,12 +30,13 @@ namespace mvc_in_memory_data_store.Controllers
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message);
+                return Results.NotFound(ex.Message);
             }
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("findAProduct/{Id}")]
         public async Task<IResult> GetAProduct(int Id)
         {
@@ -44,12 +46,13 @@ namespace mvc_in_memory_data_store.Controllers
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message);
+                return Results.NotFound(ex.Message);
             }
         }
         
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Route("addProduct")]
         public async Task<IResult> Add(Product product)
         {
@@ -57,11 +60,13 @@ namespace mvc_in_memory_data_store.Controllers
             {
                 return _productRepository.Add(product) ? Results.Created($"https://localhost:7241/api/Products/addProduct", product) : Results.NotFound();
             }
-            return Results.NotFound();
+            return Results.BadRequest("Not Found");
         }
 
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("updateProduct/{Id}")]
         public async Task<IResult> UpdateProduct(int Id, Product product)
         {
@@ -70,16 +75,17 @@ namespace mvc_in_memory_data_store.Controllers
                 if(_productRepository.UpdateProduct(Id, product)) {
                     return Results.Created($"https://localhost:7241/api/Products/updateProduct", product);
                 }
-                return Results.NotFound();
+                return Results.NotFound("Not Found");
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message);
+                return Results.BadRequest(ex.Message);
             }
         }
 
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("deleteProduct/{id}")]
         public async Task<IResult> DeleteProduct(int id)
         {
@@ -93,7 +99,7 @@ namespace mvc_in_memory_data_store.Controllers
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message);
+                return Results.NotFound(ex.Message);
             }
 
         }
