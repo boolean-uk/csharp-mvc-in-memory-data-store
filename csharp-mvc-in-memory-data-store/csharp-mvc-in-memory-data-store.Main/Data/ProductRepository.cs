@@ -8,10 +8,11 @@ namespace mvc_in_memory_data_store.Models
         private static int idCounter = 1;
         private static List<Product> _products = new List<Product>();
 
-        public void Create(string name, string category, int price)
+        public Product Create(string name, string category, int price)
         {
             Product product = new Product(idCounter++, name, category, price);
             _products.Add(product);
+            return product;
         }
 
         public List<Product> FindAll()

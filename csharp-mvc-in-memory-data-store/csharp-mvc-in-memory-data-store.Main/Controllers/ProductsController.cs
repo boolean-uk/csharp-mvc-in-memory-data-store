@@ -27,19 +27,19 @@ namespace mvc_in_memory_data_store.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IResult> CreateProduct(Product product)
+        public async Task<IResult> CreateProduct(string name, string category, int price)
         {
-            if (!(product.Price is int))
+            try
             {
-                return Results.BadRequest("Price must be an integer, something else was provided.");
-            }
-            if (_productRepository.FindByName(product.Name) != null)
-            {
-                return Results.BadRequest("Product with provided name already exists.");
-            }
-            if (_productRepository.Add(product))
+                if (_productRepository.FindByName(name) != null)
+                    return Results.BadRequest("Product with provided name already exists.");
+                var product = _productRepository.Create(name, category, price);
                 return Results.Created($"http://localhost:5186/Product/{product.Id}", product);
-            return Results.BadRequest("Could not create product");
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
         }
 
         /// <summary>
@@ -83,20 +83,32 @@ namespace mvc_in_memory_data_store.Controllers
             }
         }
 
-
         /// <summary>
-        /// 
+        /// Update an existing product by ID
         /// </summary>
-        /// <param name="product"></param>
-        /// <returns></returns>
+        /// <param name="product">The fields of product to be updated</param>
+        /// <returns>Updated product object</returns>
         [HttpPut]
-        public async Task<IResult> Put(Product product)
+        [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IResult> UpdateProduct(int id, string name, string category, int price)
         {
             try
             {
-                if (_productRepository.Add(product))
-                    return Results.Ok();
-                return Results.NotFound();
+                var product = _productRepository.FindById(id);
+                if (product == null)
+                    return Results.NotFound("Product not found.");
+                if (_productRepository.FindByName(name) != null)
+                    return Results.BadRequest("Product with provided name already exists.");
+                
+                if (!string.IsNullOrEmpty(name))
+                    product.Name = name;
+                if (!string.IsNullOrEmpty(category))
+                    product.Category = category;
+                product.Price = price;
+                return Results.Created($"http://localhost:5186/Product/{product.Id}", product);
             }
             catch (Exception ex)
             {
