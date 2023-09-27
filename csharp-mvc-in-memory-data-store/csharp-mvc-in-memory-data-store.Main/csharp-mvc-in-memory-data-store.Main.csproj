@@ -8,10 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Controllers\BagelsController - Copy.cs.exclude" />
     <None Remove="Controllers\BagelsController.cs.exclude" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Controllers\ProductsController.cs.exclude" />
     <Compile Include="Controllers\BagelsController.cs.exclude" />
   </ItemGroup>
 
