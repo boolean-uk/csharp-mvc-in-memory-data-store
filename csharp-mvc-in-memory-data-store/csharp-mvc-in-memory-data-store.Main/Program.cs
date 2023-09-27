@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IBagelRepository, BagelRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>(); // added for Products
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -16,8 +17,8 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Counter API",
-        Description = "An API providing ways to change a counter",
+        Title = "API exercise products",
+        Description = "An API for product crud operations",
         Contact = new OpenApiContact
         {
             Name = "Coder",
