@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection.Repositories;
 using mvc_in_memory_data_store.Controllers;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.DataProtection.Repositories;
 using System.Xml.Linq;
 
 namespace mvc_in_memory_data_store.Test
