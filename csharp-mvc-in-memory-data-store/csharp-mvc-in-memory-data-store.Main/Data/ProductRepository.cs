@@ -1,7 +1,5 @@
 ﻿using mvc_in_memory_data_store.Models;
 
-
-
 namespace mvc_in_memory_data_store.Data
 {
     public class ProductRepository : IProductRepository
@@ -48,7 +46,14 @@ namespace mvc_in_memory_data_store.Data
             _products.Remove(product);
             return product;
         }
-
+        public List<Product> FindByCategory(string category)
+        {
+            return _products.Where(p => p.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        public bool ProductNameExists(string name)
+        {
+            return _products.Any(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
     }
 
 }

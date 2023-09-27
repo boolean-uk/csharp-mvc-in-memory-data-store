@@ -1,4 +1,3 @@
-using mvc_in_memory_data_store.Controllers;
 using Microsoft.OpenApi.Models;
 using mvc_in_memory_data_store.Data;
 using mvc_in_memory_data_store.Models;
@@ -17,11 +16,11 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "API exercise products",
-        Description = "An API for product crud operations",
+        Title = "C# API Exercise - Extension Criteria",
+        Description = "C# API MVC in-memory List Extension Criteria",
         Contact = new OpenApiContact
         {
-            Name = "Coder",
+            Name = "MVC in Memory Extension Exercise",
         }
     });
 });

@@ -4,7 +4,7 @@ using mvc_in_memory_data_store.Models;
 
 namespace mvc_in_memory_data_store.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -26,6 +26,11 @@ namespace mvc_in_memory_data_store.Controllers
                 return Results.BadRequest(ModelState); // return validation errors
             }
 
+            if (_productRepository.ProductNameExists(product.Name))
+            {
+                return Results.BadRequest("A product with this name already exists.");
+            }
+
             try
             {
                 var createdProduct = _productRepository.Add(product);
@@ -41,11 +46,16 @@ namespace mvc_in_memory_data_store.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IResult> Get()
+        public async Task<IResult> Get([FromQuery] string category = null)
         {
             try
             {
-                return Results.Ok(_productRepository.FindAll());
+                var products = (category == null)
+                    ? _productRepository.FindAll()
+                    : _productRepository.FindByCategory(category);
+                if (products == null || products.Count == 0)
+                    return Results.NotFound("No products of the provided category were found.");
+                return Results.Ok(products);
             }
             catch (Exception ex)
             {

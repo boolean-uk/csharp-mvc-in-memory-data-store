@@ -10,5 +10,7 @@ namespace mvc_in_memory_data_store.Data
         Product FindById(int id);
         Product Update(int id, Product product);
         Product Delete(int id);
+        List<Product> FindByCategory(string category);
+        bool ProductNameExists(string Name);
     }
 }
