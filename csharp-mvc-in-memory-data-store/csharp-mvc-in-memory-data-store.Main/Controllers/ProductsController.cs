@@ -20,6 +20,11 @@ namespace mvc_in_memory_data_store.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Post([FromBody] Product product)
         {
+            if (!ModelState.IsValid)
+            {
+                return Results.BadRequest(ModelState); // return validation errors
+            }
+
             try
             {
                 var createdProduct = _productRepository.Add(product);
@@ -54,6 +59,11 @@ namespace mvc_in_memory_data_store.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Get(int id)
         {
+            if (id <= 0)
+            {
+                return Results.BadRequest("Invalid Id provided.");
+            }
+
             try
             {
                 var product = _productRepository.FindById(id);
@@ -69,10 +79,16 @@ namespace mvc_in_memory_data_store.Controllers
         // PUT /products/{id} to update a product by ID
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Put(int id, [FromBody] Product updatedProduct)
         {
+            if (id <= 0 || !ModelState.IsValid)
+            {
+                return Results.BadRequest(ModelState);
+            }
+
             try
             {
                 var product = _productRepository.Update(id, updatedProduct);
@@ -88,10 +104,16 @@ namespace mvc_in_memory_data_store.Controllers
         // DELETE /products/{id} to delete a product by ID.
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Delete(int id)
         {
+            if (id <= 0)
+            {
+                return Results.BadRequest("Invalid Id provided.");
+            }
+
             try
             {
                 var deletedProduct = _productRepository.Delete(id);
