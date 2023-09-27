@@ -48,20 +48,6 @@ namespace mvc_in_memory_data_store.Controllers
             }
         }
         
-        [HttpPut]
-        public async Task<IResult> Put(Product product)
-        {
-            try
-            {
-                if (_productRepository.Add(product)) return Results.Ok();
-                return Results.NotFound();
-
-            }
-            catch (Exception ex)
-            {
-                return Results.Problem(ex.Message);
-            }
-        }
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [Route("addProduct")]
@@ -72,6 +58,44 @@ namespace mvc_in_memory_data_store.Controllers
                 return _productRepository.Add(product) ? Results.Created($"https://localhost:7241/api/Products/addProduct", product) : Results.NotFound();
             }
             return Results.NotFound();
+        }
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [Route("updateProduct/{Id}")]
+        public async Task<IResult> UpdateProduct(int Id, Product product)
+        {
+            try
+            {
+                if(_productRepository.UpdateProduct(Id, product)) {
+                    return Results.Created($"https://localhost:7241/api/Products/updateProduct", product);
+                }
+                return Results.NotFound();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Route("deleteProduct/{id}")]
+        public async Task<IResult> DeleteProduct(int id)
+        {
+            try
+            {
+                if (_productRepository.DeleteProduct(id))
+                {
+                    return Results.Ok();
+                }
+                return Results.NotFound();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+
         }
     }
 }

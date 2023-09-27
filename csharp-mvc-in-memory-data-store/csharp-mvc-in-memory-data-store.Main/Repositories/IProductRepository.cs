@@ -9,6 +9,8 @@ namespace mvc_in_memory_data_store.Repositories
         Product find(int Id);
         bool Add(Product product);
         bool GetProduct(int id, out Product? product);
+        bool UpdateProduct(int Id, Product product);
+        bool DeleteProduct(int id);
 
 
     }

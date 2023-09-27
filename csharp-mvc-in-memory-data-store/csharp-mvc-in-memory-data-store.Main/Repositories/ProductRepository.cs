@@ -46,5 +46,33 @@ namespace mvc_in_memory_data_store.Repositories
             }
             return false;
         }
+
+        public bool UpdateProduct(int id, Product product)
+        {
+            var newProduct = _products.Where(p => p.Id == id).FirstOrDefault();
+            if (newProduct == null)
+            {
+                return false;
+            }
+
+
+            newProduct.Name = !string.IsNullOrEmpty(product.Name) ? product.Name : newProduct.Name;
+            newProduct.Category = !string.IsNullOrEmpty(product.Category) ? product.Category : newProduct.Category;
+            newProduct.Price = (product.Price != 0) ? product.Price : newProduct.Price;
+
+            return true;
+        }
+
+        public bool DeleteProduct(int id)
+        {
+            var product = _products.Where(x  => x.Id == id).FirstOrDefault();
+            if (product != null)
+            {
+                _products.Remove(product);
+                return true;
+
+            }
+            return false;
+        }
     }
 }
