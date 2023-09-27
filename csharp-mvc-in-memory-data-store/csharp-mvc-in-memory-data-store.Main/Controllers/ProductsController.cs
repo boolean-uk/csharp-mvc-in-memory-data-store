@@ -109,11 +109,24 @@ namespace mvc_in_memory_data_store.Controllers
                 return Results.BadRequest(ModelState);
             }
 
+            // fetching the existing product from the repository
+            var existingProduct = _productRepository.FindById(id);
+            if (existingProduct == null)
+            {
+                return Results.NotFound("Product not found.");
+            }
+
+            // then check if the updated product name is the same as another existing product (other than the one being updated)
+            if (existingProduct.Name != updatedProduct.Name && _productRepository.ProductNameExists(updatedProduct.Name))
+            {
+                return Results.BadRequest("A product with this name already exists.");
+            }
+
             try
             {
                 var product = _productRepository.Update(id, updatedProduct);
-                if (product == null) return Results.NotFound();
-                return Results.Ok(product);
+                if (product == null) return Results.NotFound("Failed to update product.");
+                return Results.Created($"/products/{product.Id}", product);
             }
             catch (Exception ex)
             {
@@ -137,10 +150,9 @@ namespace mvc_in_memory_data_store.Controllers
             try
             {
                 var deletedProduct = _productRepository.Delete(id);
-                if (deletedProduct != null)
-                    return Results.Ok(deletedProduct);
-                return Results.NotFound();
-
+                if (deletedProduct == null)
+                    return Results.NotFound("Product not found.");
+                return Results.Ok(deletedProduct);
             }
             catch (Exception ex)
             {
