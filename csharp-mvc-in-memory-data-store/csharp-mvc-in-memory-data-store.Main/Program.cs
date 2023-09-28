@@ -1,4 +1,3 @@
-using mvc_in_memory_data_store.Controllers;
 using Microsoft.OpenApi.Models;
 using mvc_in_memory_data_store.Data;
 using mvc_in_memory_data_store.Models;
@@ -9,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IBagelRepository, BagelRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>(); // added for Products
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -16,11 +16,11 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Counter API",
-        Description = "An API providing ways to change a counter",
+        Title = "C# API Exercise - Extension Criteria",
+        Description = "C# API MVC in-memory List Extension Criteria",
         Contact = new OpenApiContact
         {
-            Name = "Coder",
+            Name = "MVC in Memory Extension Exercise",
         }
     });
 });
