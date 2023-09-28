@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using mvc_in_memory_data_store.Data;
 using mvc_in_memory_data_store.DTOs;
+using mvc_in_memory_data_store.Factories;
 using mvc_in_memory_data_store.Models;
 
 namespace mvc_in_memory_data_store.Controllers
@@ -13,13 +14,15 @@ namespace mvc_in_memory_data_store.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
+        private readonly IProductFactory _productFactory;
 
         /// <summary>
         /// Next we initialize a new instance of the ProductsController class
         /// </summary>
-        public ProductsController(IProductRepository productRepository)
+        public ProductsController(IProductRepository productRepository, IProductFactory productFactory)
         {
             _productRepository = productRepository;
+            _productFactory = productFactory;
         }
 
         /// <summary>
@@ -43,13 +46,8 @@ namespace mvc_in_memory_data_store.Controllers
                 return Results.BadRequest("A product with this name already exists.");
             }
 
-            // Then we convert the DTO to the product model
-            var product = new Product
-            {
-                Name = productInput.Name,
-                Category = productInput.Category,
-                Price = productInput.Price
-            };
+            // Then we use the factory to convert the dto to the product model
+            var product = _productFactory.CreateProduct(productInput);
 
             // Next we try to add the product and we return the result
             try
