@@ -22,7 +22,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> CreateProduct(IProductRepository repository, [FromBody] CreateProductDTO c)
         {
-            if (!int.TryParse(c.Price.ToString(), out _))
+            if (!int.TryParse(c.Price, out _))
             {
                 return TypedResults.BadRequest("Price must be an integer, something else was provided.");
             }

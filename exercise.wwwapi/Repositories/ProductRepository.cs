@@ -29,7 +29,7 @@ namespace exercise.wwwapi.Repositories
             {
                 return null;
             }
-            Product p = new() { Name = createDTO.Name, Category = createDTO.Category, Price = createDTO.Price };
+            Product p = new() { Name = createDTO.Name, Category = createDTO.Category, Price = Int32.Parse(createDTO.Price) };
             _context.Products.Add(p);
             await _context.SaveChangesAsync();
             return p;
@@ -66,7 +66,7 @@ namespace exercise.wwwapi.Repositories
             }
             dbProduct.Name = updateDTO.Name;
             dbProduct.Category = updateDTO.Category;
-            dbProduct.Price = updateDTO.Price;
+            dbProduct.Price = Int32.Parse(updateDTO.Price);
             _context.Products.Update(dbProduct);
             await _context.SaveChangesAsync();
             return new(dbProduct, 0);
