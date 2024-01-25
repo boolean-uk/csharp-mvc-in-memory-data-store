@@ -65,4 +65,16 @@ public class Repository : IRepository
         _db.SaveChanges();
         return toDelete;
     }
+
+    public bool ProductExists(string name, out int existingId)
+    {
+        var product = _db.Products.FirstOrDefault(x => x.Name == name);
+        if (product != null)
+        {
+            existingId = product.Id;
+            return true;
+        }
+        existingId = -1;
+        return false;
+    }
 }

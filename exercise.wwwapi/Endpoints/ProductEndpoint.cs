@@ -24,6 +24,11 @@ public static class ProductEndpoint
         {
             return TypedResults.BadRequest("Price must be an int!");
         }
+        if (repository.ProductExists(product.Name, out _))
+        {
+            return TypedResults.BadRequest($"Product with the name: {product.Name} already exists!");
+        }
+
         var newProduct = repository.AddProduct(product);
         return TypedResults.Created($"/{newProduct.Id}", newProduct);
     }
@@ -61,6 +66,15 @@ public static class ProductEndpoint
     [ProducesResponseType(StatusCodes.Status200OK)]
     public static async Task<IResult> UpdateProduct(IRepository repository, int id, PutProduct product)
     {
+        int existingId = 0;
+        if (repository.ProductExists(product.Name, out existingId))
+        {
+            if (existingId != id)
+            {
+                return TypedResults.BadRequest($"Product with the name: {product.Name} already exists!");
+            }
+        }
+
         var edited = repository.UpdateProduct(id, product);
 
         if (edited == null)

@@ -10,4 +10,5 @@ public interface IRepository
     Product? GetProduct(int id);
     Product? UpdateProduct(int id, PutProduct postProduct);
     Product? DeleteProduct(int id);
+    bool ProductExists(string name, out int existingId);
 }
