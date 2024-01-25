@@ -1,4 +1,6 @@
 using exercise.wwwapi.Data;
+using exercise.wwwapi.Endpoints;
+using exercise.wwwapi.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddDbContext<ProductContext>(ops =>
 {
@@ -23,6 +27,17 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.ConfigureProductEndpoints();
+
+/*
+var productsGroup = app.MapGroup("/products");
+
+productsGroup.MapGet("/", (IProductRepository product) =>
+{
+    return TypedResults.Ok(product.getAllProducts());
+});*/
+
 
 app.Run();
 
