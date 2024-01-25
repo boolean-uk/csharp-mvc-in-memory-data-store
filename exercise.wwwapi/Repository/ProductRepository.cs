@@ -7,7 +7,7 @@ namespace exercise.wwwapi.Repository
     {
         //private ProductCollection _products;
         private ProductContext _context;
-        private int _id = 0;
+        
         public ProductRepository(ProductContext context)
         {
             _context = context;
@@ -15,8 +15,8 @@ namespace exercise.wwwapi.Repository
 
         public Product CreateAProduct(ProductPostPayload productPost)
         {
-            _id++;
-            Product product = new Product() { name = productPost.name, price = productPost.price, category = productPost.category, Id = _id };
+            
+            Product product = new Product() { name = productPost.name, price = productPost.price, category = productPost.category };
             _context.Products.Add(product);
             _context.SaveChanges();
             return product;
