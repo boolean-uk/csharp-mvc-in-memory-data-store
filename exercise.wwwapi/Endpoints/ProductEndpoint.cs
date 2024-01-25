@@ -73,7 +73,7 @@ namespace workshop.wwwapi.Endpoints
             {
                 return TypedResults.BadRequest("Price must be an integer, something else was provided.");
             }
-            if (repository.GetProducts().Any(x => x.Name == model.Name))
+            if (repository.GetProducts().Any(x => x.Name == model.Name && x.Id != id))
             {
                 return TypedResults.BadRequest("Product with provided name already exists.");
             }
