@@ -26,7 +26,7 @@ namespace exercise.wwwapi.Endpoints
             {
                 return TypedResults.BadRequest("Price must be an integer, something else was provided.");
             }
-            Product result = await repository.CreateProductAsync(c);
+            Product? result = await repository.CreateProductAsync(c);
             if (result == null)
             {
                 return TypedResults.BadRequest("Product with provided name already exists.");
@@ -50,7 +50,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> GetProductById(IProductRepository repository, int id)
         {
-            Product product = await repository.GetProductByIdAsync(id);
+            Product? product = await repository.GetProductByIdAsync(id);
             if (product == null)
             {
                 return TypedResults.NotFound("Product not found.");
@@ -67,7 +67,7 @@ namespace exercise.wwwapi.Endpoints
             {
                 return TypedResults.BadRequest("Price must be an integer, something else was provided.");
             }
-            Tuple<Product, int> result = await repository.UpdateProductByIdAsync(id, updateDTO);
+            Tuple<Product?, int> result = await repository.UpdateProductByIdAsync(id, updateDTO);
             if (result.Item1 == null)
             {
                 if (result.Item2 == -1)

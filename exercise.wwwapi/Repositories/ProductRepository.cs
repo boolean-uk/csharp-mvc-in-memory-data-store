@@ -7,10 +7,10 @@ namespace exercise.wwwapi.Repositories
 {
     public interface IProductRepository
     {
-        Task<Product> CreateProductAsync(CreateProductDTO createDTO);
+        Task<Product?> CreateProductAsync(CreateProductDTO createDTO);
         Task<List<Product>> GetAllProductsAsync(string category);
-        Task<Product> GetProductByIdAsync(int id);
-        Task<Tuple<Product, int>> UpdateProductByIdAsync(int id, CreateProductDTO updateDTO);
+        Task<Product?> GetProductByIdAsync(int id);
+        Task<Tuple<Product?, int>> UpdateProductByIdAsync(int id, CreateProductDTO updateDTO);
         Task<Product> DeleteProductByIdAsync(int id);
     }
     public class ProductRepository : IProductRepository
@@ -22,9 +22,9 @@ namespace exercise.wwwapi.Repositories
             _context = context;
         }
 
-        public async Task<Product> CreateProductAsync(CreateProductDTO createDTO)
+        public async Task<Product?> CreateProductAsync(CreateProductDTO createDTO)
         {
-            Product dbProductWithName = await _context.Products.Where(x => x.Name == createDTO.Name).FirstOrDefaultAsync();
+            Product? dbProductWithName = await _context.Products.Where(x => x.Name == createDTO.Name).FirstOrDefaultAsync();
             if (dbProductWithName != null)
             {
                 return null;
@@ -47,19 +47,19 @@ namespace exercise.wwwapi.Repositories
             }
         }
 
-        public async Task<Product> GetProductByIdAsync(int id)
+        public async Task<Product?> GetProductByIdAsync(int id)
         {
             return await _context.Products.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<Tuple<Product, int>> UpdateProductByIdAsync(int id, CreateProductDTO updateDTO)
+        public async Task<Tuple<Product?, int>> UpdateProductByIdAsync(int id, CreateProductDTO updateDTO)
         {
-            Product dbProductWithName = await _context.Products.Where(x => x.Name == updateDTO.Name).FirstOrDefaultAsync();
+            Product? dbProductWithName = await _context.Products.Where(x => x.Name == updateDTO.Name).FirstOrDefaultAsync();
             if (dbProductWithName != null)
             {
                 return new(null, -1);
             }
-            Product dbProduct = await GetProductByIdAsync(id);
+            Product? dbProduct = await GetProductByIdAsync(id);
             if (dbProduct == null)
             {
                 return new(null, -2);
