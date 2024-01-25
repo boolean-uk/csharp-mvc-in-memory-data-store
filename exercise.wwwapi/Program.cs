@@ -23,6 +23,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next(context);
+    }
+    catch (BadHttpRequestException ex)
+    {
+        var exceptionMessage = ex.Message;
+        await Results.BadRequest($"price must be an integer, something else was provided").ExecuteAsync(context);
+    }
+});
+
 app.UseHttpsRedirection();
 
 app.ConfigureProductEndpoint();
