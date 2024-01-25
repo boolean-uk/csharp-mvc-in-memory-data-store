@@ -34,7 +34,7 @@ namespace exercise.wwwapi.Endpoints
             Product updateProduct = product.UpdateProduct(_id, payload);
             if (updateProduct == null)
             {
-                return TypedResults.NotFound($"id {_id} could not be found");
+                return TypedResults.NotFound($"product {_id} could not be found");
             } else
             {
                 return TypedResults.Created($"/products/{_id}", updateProduct);
@@ -44,7 +44,22 @@ namespace exercise.wwwapi.Endpoints
 
         private static IResult AddProduct(IProductRepository product, ProductPostPayload payload)
         {
-            return TypedResults.Created($"/products", product.AddProduct(payload));
+            try
+            {
+                var result = product.AddProduct(payload);
+                if (result == null)
+                {
+                    return TypedResults.BadRequest("Invalid payload");
+                } else
+                {
+                    return TypedResults.Created($"/products", result);
+                }
+                
+            } catch (Exception ex)
+            {
+                return TypedResults.BadRequest(ex.Message);
+            }
+            
         }
 
         private static IResult getProductById(int _id, IProductRepository product)
@@ -52,7 +67,7 @@ namespace exercise.wwwapi.Endpoints
             Product foundProduct = product.getProductById(_id);
             if (foundProduct == null)
             {
-                return TypedResults.NotFound($"id: {_id} couls not be found");
+                return TypedResults.NotFound($"product: {_id} couls not be found");
             }else
             {
                 return TypedResults.Ok(foundProduct);
@@ -62,7 +77,15 @@ namespace exercise.wwwapi.Endpoints
 
         private static IResult getAllProducts(IProductRepository product)
         {
-            return TypedResults.Ok(product.getAllProducts());
+            List<Product> tmp = product.getAllProducts();
+            if (tmp.Count == 0)
+            {
+                return TypedResults.NotFound("No Products could be found");
+            } else
+            {
+                return TypedResults.Ok(product.getAllProducts());
+            }
+            
         }
     }
 }

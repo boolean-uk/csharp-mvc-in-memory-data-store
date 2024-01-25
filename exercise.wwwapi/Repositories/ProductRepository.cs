@@ -15,10 +15,50 @@ namespace exercise.wwwapi.Repositories
 
         public Product AddProduct(ProductPostPayload payload)
         {
-            var newProduct = new Product() { Id = getNextId(), Name = payload.name, Category = payload.category, Price = payload.price };
-            _db.Add(newProduct);
-            _db.SaveChanges();
-            return newProduct;
+            try
+            {
+                if (!isValidPayload(payload))
+                {
+                    return null;
+                }
+
+                var newProduct = new Product() { Id = getNextId(), Name = payload.name, Category = payload.category, Price = payload.price };
+                _db.Add(newProduct);
+                _db.SaveChanges();
+                return newProduct;
+            } catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred: {ex}");
+                return null;
+            }
+            
+        }
+
+        private bool isValidPayload(ProductPostPayload payload)
+        {
+            try
+            {
+                if (!(payload.name is string) || !(payload.category is string))
+                {
+                    throw new Exception("Name and category must be strings.");
+                }
+
+                if (string.IsNullOrEmpty(payload.name) || string.IsNullOrEmpty(payload.category))
+                {
+                    throw new Exception("Name and category must be provided.");
+                }
+
+                if (!(payload.price > 0))
+                {
+                    throw new Exception("Price must be greater than 0");
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private int getNextId()
