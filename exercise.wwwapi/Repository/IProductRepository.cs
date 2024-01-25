@@ -9,5 +9,7 @@ namespace exercise.wwwapi.Repository
         public InternalProduct Create(Product product);
         public InternalProduct Update(int id, Product product);
         public InternalProduct Delete(int id);
+
+        public bool NameExists(string name);
     }
 }

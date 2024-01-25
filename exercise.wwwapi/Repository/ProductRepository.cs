@@ -12,6 +12,11 @@ namespace exercise.wwwapi.Repository
             _db = db;
         }
 
+        public bool NameExists(string name)
+        {
+            return _db.Products.Any(p => p.Name == name);
+        }
+
         public InternalProduct Create(Product product)
         {
             InternalProduct internalProduct = new InternalProduct(product.Name, product.Category, product.Price);
@@ -21,9 +26,12 @@ namespace exercise.wwwapi.Repository
         }
 
 
-        public InternalProduct Delete(int id)
+        public InternalProduct? Delete(int id)
         {
-            InternalProduct internalProduct = _db.Products.FirstOrDefault(x => x.Id == id);
+            InternalProduct? internalProduct = _db.Products.FirstOrDefault(x => x.Id == id);
+
+            if (internalProduct == null)
+                return null;
 
             _db.Products.Remove(internalProduct);
             _db.SaveChanges();
@@ -31,28 +39,32 @@ namespace exercise.wwwapi.Repository
             return internalProduct;
         }
 
-        public IEnumerable<InternalProduct> Get()
+        public IEnumerable<InternalProduct>? Get()
         {
+            if (!_db.Products.Any())
+                return null;
+
             return _db.Products;
         }
 
-        public InternalProduct Get(int id)
+        public InternalProduct? Get(int id)
         {
             return _db.Products.FirstOrDefault(x => x.Id == id);
         }
 
-        public InternalProduct Update(int id, Product product)
+        public InternalProduct? Update(int id, Product product)
         {
             InternalProduct internalProduct = _db.Products.FirstOrDefault(x => x.Id == id);
-            if (internalProduct != null)
-            {
-                internalProduct.Name = product.Name;
-                internalProduct.Category = product.Category;
-                internalProduct.Price = product.Price;
-                _db.SaveChanges();
-            }
+
+            if (internalProduct == null)
+                return null;
+
+            internalProduct.Name = product.Name;
+            internalProduct.Category = product.Category;
+            internalProduct.Price = product.Price;
+            _db.SaveChanges();
+            
             return internalProduct;
         }
-
     }
 }
