@@ -1,9 +1,17 @@
+using exercise.wwwapi.Controller;
+using exercise.wwwapi.Data;
+using exercise.wwwapi.Repository;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<ProductContext>(opt => opt.UseInMemoryDatabase("ProductDb"));
+builder.Services.AddScoped<IRepository, ProductRepository>();
 
 var app = builder.Build();
 
@@ -15,6 +23,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.ConfigureProductsEndpoint();
 
 app.Run();
 
