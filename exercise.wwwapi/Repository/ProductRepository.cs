@@ -17,9 +17,16 @@ namespace exercise.wwwapi.Repository
             return product;
         }
 
-        public IEnumerable<Product> GetProducts()
+        public IEnumerable<Product> GetProducts(string category = null)
         {
-            return _db.Products.ToList();
+            if(category == null)
+            {
+                return _db.Products.ToList();
+            }
+            else
+            {
+                return _db.Products.Where(p => p.Category == category).ToList();
+            }
         }
 
         public Product GetAProduct(int id)
@@ -47,5 +54,6 @@ namespace exercise.wwwapi.Repository
             _db.Products.Remove(removeThis);
             return  removeThis;
         }
+
     }
 }

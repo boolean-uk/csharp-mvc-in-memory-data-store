@@ -18,9 +18,9 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> GetProducts(IProductRepository repository)
+        public static async Task<IResult> GetProducts(IProductRepository repository, string category = null)
         {
-            return TypedResults.Ok(repository.GetProducts());
+            return TypedResults.Ok(repository.GetProducts(category));
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
