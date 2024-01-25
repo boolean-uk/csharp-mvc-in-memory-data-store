@@ -1,13 +1,17 @@
-﻿namespace exercise.wwwapi.Model
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace exercise.wwwapi.Model
 {
     public class InternalProduct : Product
     {
-        private int _availabelID = 1;
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public InternalProduct(string name, string category, int price) : base(name, category, price)
         {
-            Id = _availabelID++;
+            
         }
     }
 }

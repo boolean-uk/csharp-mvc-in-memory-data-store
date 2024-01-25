@@ -16,14 +16,17 @@ namespace exercise.wwwapi.Repository
         {
             InternalProduct internalProduct = new InternalProduct(product.Name, product.Category, product.Price);
             _db.Products.Add(internalProduct);
+            _db.SaveChanges();
             return internalProduct;
         }
+
 
         public InternalProduct Delete(int id)
         {
             InternalProduct internalProduct = _db.Products.FirstOrDefault(x => x.Id == id);
 
             _db.Products.Remove(internalProduct);
+            _db.SaveChanges();
 
             return internalProduct;
         }
@@ -41,12 +44,15 @@ namespace exercise.wwwapi.Repository
         public InternalProduct Update(int id, Product product)
         {
             InternalProduct internalProduct = _db.Products.FirstOrDefault(x => x.Id == id);
-
-            internalProduct.Name = product.Name;
-            internalProduct.Category = product.Category;
-            internalProduct.Price = product.Price;
-
+            if (internalProduct != null)
+            {
+                internalProduct.Name = product.Name;
+                internalProduct.Category = product.Category;
+                internalProduct.Price = product.Price;
+                _db.SaveChanges();
+            }
             return internalProduct;
         }
+
     }
 }
