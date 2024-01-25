@@ -1,5 +1,6 @@
 using exercise.wwwapi.Models;
 using exercise.wwwapi.Repository;
+using Microsoft.AspNetCore.Mvc;
 
 namespace exercise.wwwapi.EndPoints
 {
@@ -15,12 +16,15 @@ namespace exercise.wwwapi.EndPoints
             ProductGroup.MapPut("/{id}", UpdateProduct);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public static IResult GetAllProduct(IProductRepository _productRepository)
         {
             var products = _productRepository.GetAllProducts();
             return Results.Ok(products);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static IResult GetProduct(IProductRepository _productRepository, int id)
         {
             var product = _productRepository.GetProduct(id);
@@ -31,13 +35,17 @@ namespace exercise.wwwapi.EndPoints
             return Results.Ok(product);
         }
 
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static IResult AddProduct(IProductRepository products, ProductPostPayload productPostPayload)
         {
             var product = products.AddProduct(productPostPayload.Name, productPostPayload.Category, productPostPayload.Price);
             return Results.Created($"/product/{product.Id}", product);
         }
 
-
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static IResult UpdateProduct(IProductRepository products, int id, ProductUpdatePayload productUpdatePayload)
         {
             var product = products.UpdateProduct(id, productUpdatePayload);
@@ -48,6 +56,8 @@ namespace exercise.wwwapi.EndPoints
             return Results.Ok(product);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static IResult DeleteProduct(IProductRepository products, int id)
         {
             var product = products.DeleteProduct(id);
