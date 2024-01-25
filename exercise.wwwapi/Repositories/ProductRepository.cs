@@ -17,7 +17,7 @@ namespace exercise.wwwapi.Repository
         {
             var product = new ProductItem() { Name = payload.Name, Price = payload.Price, Category = payload.Category };
 
-            if (_db.ProductItems.FirstOrDefault(x => x.Name == payload.Name) != default)
+            if (ProductAlreadyExisits(payload))
             {
                 return null;
             }
@@ -36,11 +36,19 @@ namespace exercise.wwwapi.Repository
             return _db.ProductItems.ToList();
         }
 
+        public List<ProductItem> GetAll(string category)
+        {
+            return _db.ProductItems.Where(p => p.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
         public ProductItem? Update(int id, ProductPayload updatePayload)
         {
+            if (ProductAlreadyExisits(updatePayload))
+            {
+                return null;
+            }
 
             var product = Get(id);
-            if (product == null) { return null; }
 
             if (!string.IsNullOrWhiteSpace(updatePayload.Name)) { product.Name = updatePayload.Name; }
             if (!(updatePayload.Price < 0)) { product.Price = updatePayload.Price; }
@@ -60,6 +68,15 @@ namespace exercise.wwwapi.Repository
             _db.SaveChanges();
             return product;
 
+        }
+
+        private bool ProductAlreadyExisits(ProductPayload payload)
+        {
+            if (_db.ProductItems.FirstOrDefault(x => x.Name == payload.Name) == default)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

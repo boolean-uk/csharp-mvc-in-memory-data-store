@@ -11,6 +11,7 @@ namespace exercise.wwwapi.Endpoints
             var students = app.MapGroup("/products");
 
             students.MapPost("", AddProduct);
+            //students.MapGet("", GetAllProducts);
             students.MapGet("", GetAllProducts);
             students.MapGet("/{id}", GetAProduct);
             students.MapPatch("/{id}", UpdateAProduct);
@@ -35,10 +36,16 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static IResult GetAllProducts(IRepository products)
+        public static IResult GetAllProducts(IRepository products, string category)
         {
-            if (products.GetAll() == null || products.GetAll().Count <= 0) { return TypedResults.NoContent(); }
-            return TypedResults.Ok(products.GetAll());
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                if (products.GetAll() == null || products.GetAll().Count <= 0) { return TypedResults.NotFound("No products were found."); }
+                return TypedResults.Ok(products.GetAll());
+            }
+
+            if (products.GetAll(category) == null || products.GetAll(category).Count <= 0) { return TypedResults.NotFound("No products of the provided category were found."); }
+            return TypedResults.Ok(products.GetAll(category));
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -63,8 +70,8 @@ namespace exercise.wwwapi.Endpoints
 
             product = products.Update(id, updatePayload);
 
+            if (product == null) { return TypedResults.BadRequest("Product with name already exists."); }
             return TypedResults.Created(product.ToString());
-
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
