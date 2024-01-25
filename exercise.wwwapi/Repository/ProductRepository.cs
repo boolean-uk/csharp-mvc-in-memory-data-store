@@ -13,14 +13,23 @@ namespace exercise.wwwapi.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Product>> GetProducts()
+        public async Task<IEnumerable<Product>> GetProducts(string category)
         {
-            return await _context.Products.ToListAsync();
+            if(string.IsNullOrEmpty(category))
+            {
+                return await _context.Products.ToListAsync();
+            }
+            return await _context.Products.Where(p => p.Category.Equals(category , StringComparison.OrdinalIgnoreCase)).ToListAsync();
         }
 
         public async Task<Product> GetProduct(int id)
         {
             return await _context.Products.FindAsync(id);
+        }
+
+        public async Task<Product> GetProductByName(string name)
+        {
+            return await _context.Products.FirstOrDefaultAsync(p => p.Name.Equals(name , StringComparison.OrdinalIgnoreCase));
         }
 
         public async Task<Product> AddProduct(Product product)
@@ -30,11 +39,17 @@ namespace exercise.wwwapi.Repository
             return product;
         }
 
-        public async Task<Product> UpdateProduct(int id , Product product)
+        public async Task UpdateProduct(int id , Product product)
         {
-            _context.Entry(product).State = EntityState.Modified;
+            var existingProduct = await _context.Products.FindAsync(id);
+            if(existingProduct == null)
+            {
+                return;
+            }
+            existingProduct.Name = product.Name;
+            existingProduct.Category = product.Category;
+            existingProduct.Price = product.Price;
             await _context.SaveChangesAsync();
-            return product;
         }
 
         public async Task<Product> DeleteProduct(int id)

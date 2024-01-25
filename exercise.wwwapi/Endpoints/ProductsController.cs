@@ -16,33 +16,68 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Product>> GetProducts()
+        public async Task<IActionResult> GetProducts(string category)
         {
-            return await _repository.GetProducts();
+            var products = await _repository.GetProducts(category);
+            if(products == null || !products.Any())
+            {
+                return NotFound(new { message = "No products of the provided category were found." });
+            }
+            return Ok(products);
         }
 
         [HttpGet("{id}")]
-        public async Task<Product> GetProduct(int id)
+        public async Task<IActionResult> GetProduct(int id)
         {
-            return await _repository.GetProduct(id);
+            var product = await _repository.GetProduct(id);
+            if(product == null)
+            {
+                return NotFound(new { message = "Product not found." });
+            }
+            return Ok(product);
         }
 
         [HttpPost]
-        public async Task<Product> CreateProduct(Product product)
+        public async Task<IActionResult> CreateProduct(Product product)
         {
-            return await _repository.AddProduct(product);
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Price must be an integer, something else was provided." });
+            }
+            var existingProduct = await _repository.GetProductByName(product.Name);
+            if(existingProduct != null)
+            {
+                return BadRequest(new { message = "Product with provided name already exists." });
+            }
+            var createdProduct = await _repository.AddProduct(product);
+            return CreatedAtAction(nameof(GetProduct) , new { id = createdProduct.Id } , createdProduct);
         }
 
         [HttpPut("{id}")]
-        public async Task<Product> UpdateProduct(int id , Product product)
+        public async Task<IActionResult> UpdateProduct(int id , Product product)
         {
-            return await _repository.UpdateProduct(id , product);
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Price must be an integer, something else was provided." });
+            }
+            var existingProduct = await _repository.GetProduct(id);
+            if(existingProduct == null)
+            {
+                return NotFound(new { message = "Product not found." });
+            }
+            await _repository.UpdateProduct(id , product);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<Product> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            return await _repository.DeleteProduct(id);
+            var product = await _repository.DeleteProduct(id);
+            if(product == null)
+            {
+                return NotFound(new { message = "Product not found." });
+            }
+            return Ok(product);
         }
     }
 }
