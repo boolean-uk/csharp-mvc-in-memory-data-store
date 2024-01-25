@@ -21,7 +21,7 @@ namespace exercise.wwwapi.Repository {
 
         public Product? DeleteProduct(int Id)
         {
-            Product product = GetProduct(Id);
+            Product? product = GetProduct(Id);
             if (product == null)
             {
                 return null;
@@ -44,7 +44,7 @@ namespace exercise.wwwapi.Repository {
 
         public Product? UpdateProduct(int Id, ProductUpdatePayload updateData)
         {
-            Product product = _db.Products.Find(Id);
+            Product? product = _db.Products.Find(Id);
             if (product == null)
             {
                 return null;
