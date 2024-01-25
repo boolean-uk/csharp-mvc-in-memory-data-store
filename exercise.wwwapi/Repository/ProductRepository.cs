@@ -1,6 +1,7 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Models;
 using Microsoft.AspNetCore.Authentication;
+using System.Xml.Linq;
 
 namespace exercise.wwwapi.Repository
 {
@@ -21,6 +22,13 @@ namespace exercise.wwwapi.Repository
 
         public Product AddProduct(string name, string catagory, int price)
         {
+            List<Product> products = _db.Products.ToList();
+            for (int i = 0; i < products.Count(); i++)
+            {
+                if (products[i].Name == name)
+                    return null;
+            }
+
             var newProduct = new Product() { ID = _id++, Name = name, Catagory = catagory, Price = price };
             _db.Add(newProduct);
             _db.SaveChanges();
@@ -35,9 +43,16 @@ namespace exercise.wwwapi.Repository
         public Product? UpdateProduct(Product products, ProductUpdatePayload updateData)
         {
             bool hasUpdate = false;
+            List<Product> productList = _db.Products.ToList();
 
             if (updateData.name != null)
             {
+                for (int i = 0; i < productList.Count(); i++)
+                {
+                    if (productList[i].Name == updateData.name)
+                        return null;
+                }
+
                 products.Name = (string)updateData.name;
                 hasUpdate = true;
             }

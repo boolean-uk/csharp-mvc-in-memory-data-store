@@ -17,7 +17,11 @@ namespace exercise.wwwapi.Endpoints
 
         public static IResult GetAllProducts(IProductRepository products)
         {
-            return TypedResults.Ok(products.GetAllProducts());
+            List<Product> productsList = products.GetAllProducts();
+            if (productsList.Count() == 0)
+                return TypedResults.NotFound();
+
+            return TypedResults.Ok(productsList);
         }
 
         public static IResult GetProduct(IProductRepository products, int id)
@@ -33,7 +37,7 @@ namespace exercise.wwwapi.Endpoints
         {
             Product? product = products.AddProduct(createdProduct.name, createdProduct.catagory, createdProduct.price);
             if (product == null)
-                return Results.NotFound("Could not create student");
+                return Results.BadRequest("Name already found");
 
             return TypedResults.Created($"/products{product.Name} {product.Catagory} {product.Price}", product);
         }
@@ -45,6 +49,9 @@ namespace exercise.wwwapi.Endpoints
                 return Results.NotFound("ID out of scope");
 
             product = products.UpdateProduct(product, posted);
+            if (product == null)
+                return Results.BadRequest("Name already found");
+
             return TypedResults.Created($"/products{product.Name} {product.Catagory} {product.Price}", product);
         }
 
