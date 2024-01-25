@@ -4,7 +4,7 @@ namespace exercise.wwwapi.Repository
 {
     public interface IProductRepository
     {
-        public List<Product> GetAllProducts();
+        public List<Product> GetAllProducts(string? filter);
 
         public Product AddProduct(string name, string category, int price);
 

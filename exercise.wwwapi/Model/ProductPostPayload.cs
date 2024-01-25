@@ -4,14 +4,12 @@ namespace exercise.wwwapi.Model
 {
     public class ProductPostPayload
     {
-        [Required(ErrorMessage = "Name is required")]
-        public string Name { get; init; }
 
-        [Required(ErrorMessage = "Category is required")]
-        public string Category { get; init; }
+        public string Name { get; set; }
 
-        [Required(ErrorMessage = "Price is required"), Range(0, int.MaxValue, ErrorMessage = "Value must be a number!")]
-        public int Price { get; init; }
+        public string Category { get; set; }
+
+        public int Price { get; set; }
 
         public ProductPostPayload(string name, string category, int price) 
         {
@@ -19,5 +17,6 @@ namespace exercise.wwwapi.Model
             Category = category;
             Price = price;
         }
+
     }
 }

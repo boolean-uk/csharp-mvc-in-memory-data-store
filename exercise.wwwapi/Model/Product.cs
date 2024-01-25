@@ -1,4 +1,6 @@
-﻿namespace exercise.wwwapi.Model
+﻿using Microsoft.AspNetCore.Antiforgery;
+
+namespace exercise.wwwapi.Model
 {
     public class Product
     {

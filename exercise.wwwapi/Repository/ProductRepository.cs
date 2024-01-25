@@ -12,8 +12,13 @@ namespace exercise.wwwapi.Repository
             _db = db;
         }
 
-        public List<Product> GetAllProducts()
+        public List<Product> GetAllProducts(string? filter)
         {
+
+            if (filter != null)
+            {
+                return _db.Products.Where(x => x.Category == filter).ToList();
+            }
             return _db.Products.ToList();
         }
 
