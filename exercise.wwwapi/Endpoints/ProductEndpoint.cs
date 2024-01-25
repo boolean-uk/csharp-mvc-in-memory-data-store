@@ -31,7 +31,7 @@ namespace exercise.wwwapi.Endpoints
             {
                 return TypedResults.BadRequest("Product with provided name already exists.");
             }
-            return TypedResults.Ok(result);
+            return TypedResults.Created($"https://localhost:7280/products/{result.Id}", result);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -79,7 +79,7 @@ namespace exercise.wwwapi.Endpoints
                     return TypedResults.NotFound("Product not found.");
                 }
             }
-            return TypedResults.Ok(result);
+            return TypedResults.Created($"https://localhost:7280/products/{result.Item1.Id}", result.Item1);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
