@@ -1,14 +1,19 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace exercise.wwwapi.Repository
 {
-    public class ProductRepository : IRepository
+    public class ProductRepository<T> : IRepository<T> where T : class
     {
-        private ProductContext _db;
-        public ProductRepository(ProductContext db)
+        private DataContext _db;
+        private DbSet<T> _table = null;
+
+        public ProductRepository(DataContext db)
         {
             _db = db;
+            _table = _db.Set<T>();
         }
 
         /// <inheritdoc/>
@@ -22,6 +27,7 @@ namespace exercise.wwwapi.Repository
             _db.SaveChanges();
             return prod;
         }
+
 
         /// <inheritdoc/>
         public IEnumerable<Product> GetProducts(string? category)
@@ -44,6 +50,8 @@ namespace exercise.wwwapi.Repository
             Product? prod = _db.Products.FirstOrDefault(p => p.Id == id);
             return prod;
         }
+
+
 
         /// <inheritdoc/>
         public Product? PostProduct(ProductPost prod)
@@ -84,6 +92,57 @@ namespace exercise.wwwapi.Repository
 
             _db.SaveChanges();
             return new Tuple<Product?, int>(orgProduct, 201);
+        }
+        public T Insert(T entity)
+        {
+
+            _table.Add(entity);
+            _db.SaveChanges();
+            return entity;
+
+        }
+
+        public Tuple<T, int> Update(int id, T entity)
+        {
+            throw new NotImplementedException();
+        }
+        public T? GetById(int id)
+        {
+            return _table.Find(id);
+        }
+
+        public IEnumerable<T> Get(string? category)
+        {
+            T instance = 
+
+            if (category == null)
+            {
+                return _table.ToList();
+            }
+            if (typeof(T) is Product)
+            {
+
+            }
+            else 
+            {
+                return _table.Where(e => e.Category).ToList();
+            }
+            
+        }
+
+        public bool NameIsAvailable(string? name)
+        {
+            if (name == null) { return true; }
+            if ( _table.Where(e => e.) ) { }
+        }
+
+        public T Delete(int id)
+        {
+            T entity = _table.Find(id);
+            _table.Remove(entity);
+            _db.SaveChanges();
+
+            return entity;
         }
     }
 }
