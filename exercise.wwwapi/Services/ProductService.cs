@@ -12,16 +12,16 @@ namespace exercise.wwwapi.Services
             _context = productContext;
         }
 
-        public InternalProduct? CreateInternalProduct(IRepository<InternalProduct> repository, Product product)
+        public InternalProduct CreateInternalProduct(Product product)
         {
             InternalProduct internalProduct = new InternalProduct(product.Name, product.Category, product.Price);
 
-            return repository.Create(internalProduct);
+            return internalProduct;
         }
 
-        public InternalProduct? UpdateInternalProduct(IRepository<InternalProduct> repository, int id, Product product)
+        public InternalProduct? UpdateInternalProduct(int id, Product product)
         {
-            var internalProduct = _context.Products.Find(id);
+            InternalProduct internalProduct = _context.Products.Find(id);
 
             if (internalProduct == null)
                 return null;
@@ -30,7 +30,7 @@ namespace exercise.wwwapi.Services
             internalProduct.Category = product.Category;
             internalProduct.Price = product.Price;
 
-            return repository.Update(id, internalProduct);
+            return internalProduct;
         }
     }
 }

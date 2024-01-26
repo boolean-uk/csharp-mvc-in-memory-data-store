@@ -48,14 +48,15 @@ namespace exercise.wwwapi.EndPoint
                 return TypedResults.BadRequest("Product name already exists.");
             }
 
-            var updatedProduct = productService.CreateInternalProduct(repository, product);
+            InternalProduct updatedProduct = productService.CreateInternalProduct(product);
+
             if (updatedProduct == null)
             {
                 return TypedResults.NotFound("Product not found.");
             }
             else
             {
-                return TypedResults.Accepted($"url", updatedProduct);
+                return TypedResults.Accepted($"url", repository.Create(updatedProduct));
             }
         }
 
@@ -69,14 +70,15 @@ namespace exercise.wwwapi.EndPoint
             if (repository.NameExists(product.Name))
                 return TypedResults.BadRequest("Product name already exists.");
 
-            var updatedProduct = productService.UpdateInternalProduct(repository, id, product);
+            InternalProduct updatedProduct = productService.UpdateInternalProduct(id, product);
+
             if (updatedProduct == null)
             {
                 return TypedResults.NotFound("Product not found.");
             }
             else
             {
-                return TypedResults.Accepted($"url", updatedProduct);
+                return TypedResults.Accepted($"url", repository.Update(id, updatedProduct));
             }
         }
 
