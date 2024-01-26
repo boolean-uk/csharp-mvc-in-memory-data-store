@@ -3,6 +3,7 @@ using exercise.wwwapi.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography.X509Certificates;
+using static exercise.wwwapi.Model.@enum;
 
 namespace exercise.wwwapi.Endpoint
 {
@@ -23,29 +24,52 @@ namespace exercise.wwwapi.Endpoint
 
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> GetAllProducts(IRepository repository)
+        public static async Task<IResult> GetAllProducts(IRepository repository, ProductType type)
         {
-            return TypedResults.Ok(repository.GetAllProducts());
+            if (type != ProductType.Book)
+            {
+                return TypedResults.BadRequest("Not found");
+            }
+            return TypedResults.Ok(repository.GetAllProducts(type));
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         public static async Task<IResult> GetProduct(IRepository repository, int id)
         {
+            if (!repository.ProductExist(id))
+            {
+                return TypedResults.NotFound("Product not found");
+            }
             return TypedResults.Ok(repository.GetProductById(id));
         }
         [ProducesResponseType(StatusCodes.Status201Created)]
         public static async Task<IResult> AddProduct(IRepository repository, Product product)
         {
+            if (!int.TryParse(product.price.ToString(), out _) || repository.ProductExist(product.name))
+            {
+                return TypedResults.BadRequest("Price must be an integer, something else was provided/Product with provided name already exists.");
+            }
             var prod = repository.CreateProduct(product);
             return TypedResults.Created($"{prod.name} was added");
         }
 
         public static async Task<IResult> DeleteProduct(IRepository repository, int id)
         {
+            if (!repository.ProductExist(id))
+            {
+                return TypedResults.NotFound("Product not found");
+            }
             return TypedResults.Ok(repository.DeleteProductById(id));
         }
 
         public static async Task<IResult> UpdateProduct(IRepository repository, int id, ProductPut productPut)
         {
+            if (!int.TryParse(productPut.price.ToString(), out _) || repository.ProductExist(productPut.name))
+            {
+                return TypedResults.BadRequest("Price must be an integer, something else was provided/Product with provided name already exists.");
+            } else if (!repository.ProductExist(id))
+            {
+                return TypedResults.NotFound("Product not found");
+            }
             return TypedResults.Ok(repository.UpdateProductById(id, productPut));
         }
     }

@@ -4,7 +4,7 @@
     {
         public enum ProductType
         {
-            Book
+            Book, Game, Toy
         }
     }
 }

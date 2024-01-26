@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Model;
+using static exercise.wwwapi.Model.@enum;
 
 namespace exercise.wwwapi.Repository
 {
@@ -35,15 +36,25 @@ namespace exercise.wwwapi.Repository
             return product;
         }
 
-        public IEnumerable<Product> GetAllProducts()
+        public IEnumerable<Product> GetAllProducts(ProductType type)
         {
-            return _database.Products.ToList();
+            return _database.Products.Where(p => p.type == type).ToList();
         }
 
         public Product GetProductById(int id)
         {
             var product = _database.Products.FirstOrDefault(p => p.id == id);
             return product;
+        }
+
+        public bool ProductExist(string name)
+        {
+            return true ? _database.Products.Any(p => p.name == name) : false;  
+        }
+
+        public bool ProductExist(int id)
+        {
+            return true ? _database.Products.Any(p => p.id == id) : false;
         }
 
         public Product UpdateProductById(int id, ProductPut productToUpdate)
