@@ -22,6 +22,8 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> AddProduct(IRepository repository, ProductPost product)
         {
             if (!int.TryParse(product.Price, out var price))
@@ -41,11 +43,12 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> GetProducts(IRepository repository, string category)
         {
             var products = repository.GetProducts(category.ToLower());
 
-            if (products.Count() == 0)
+            if (products == null || products.Count() == 0)
             {
                 return TypedResults.NotFound("No products of the provided category were found");
             }
@@ -54,6 +57,7 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> GetAProduct(IRepository repository, int id)
         {
             var product = repository.GetAProduct(id);
@@ -67,6 +71,8 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> UpdateProduct(IRepository repository, int id, ProductPost product)
         {
             if (!int.TryParse(product.Price, out _))
@@ -90,6 +96,7 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> DeleteProduct(IRepository repository, int id)
         {
             var product = repository.DeleteProduct(id);
