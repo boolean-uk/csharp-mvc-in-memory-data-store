@@ -36,7 +36,7 @@ namespace exercise.wwwapi.EndPoint
 
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static async Task<IResult> Post(IRepository<InternalProduct> repository, Product product)
+        public static async Task<IResult> Post(IRepository<InternalProduct> repository, ProductService productService, Product product)
         {
             if (product.Price < 0)
             {
@@ -48,14 +48,20 @@ namespace exercise.wwwapi.EndPoint
                 return TypedResults.BadRequest("Product name already exists.");
             }
 
-            InternalProduct internalProduct = ProductService.ConvertProduct(product);
-
-            return TypedResults.Created("url", repository.Create(internalProduct));
+            var updatedProduct = productService.CreateInternalProduct(product);
+            if (updatedProduct == null)
+            {
+                return TypedResults.NotFound("Product not found.");
+            }
+            else
+            {
+                return TypedResults.Accepted($"url", updatedProduct);
+            }
         }
 
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static async Task<IResult> Put(IRepository<InternalProduct> repository, int id, Product product)
+        public static async Task<IResult> Put(IRepository<InternalProduct> repository, ProductService productService, int id, Product product)
         {
             if (product.Price < 0)
                 return TypedResults.BadRequest("Price must be a positive integer.");
@@ -63,9 +69,15 @@ namespace exercise.wwwapi.EndPoint
             if (repository.NameExists(product.Name))
                 return TypedResults.BadRequest("Product name already exists.");
 
-            InternalProduct internalProduct = ProductService.ConvertProduct(product);
-
-            return internalProduct != null ? TypedResults.Accepted("url", internalProduct) : TypedResults.NotFound("Product not found.");
+            var updatedProduct = productService.UpdateInternalProduct(id, product);
+            if (updatedProduct == null)
+            {
+                return TypedResults.NotFound("Product not found.");
+            }
+            else
+            {
+                return TypedResults.Accepted($"url", updatedProduct);
+            }
         }
 
         [ProducesResponseType(StatusCodes.Status202Accepted)]

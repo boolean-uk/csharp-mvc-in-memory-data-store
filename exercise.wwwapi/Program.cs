@@ -2,6 +2,7 @@ using exercise.wwwapi.Data;
 using exercise.wwwapi.EndPoint;
 using exercise.wwwapi.Model;
 using exercise.wwwapi.Repository;
+using exercise.wwwapi.Services;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -14,7 +15,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IRepository<InternalProduct>, Repository<InternalProduct>>();
 builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
-builder.Services.AddDbContext<ProductContex>(opt => opt.UseInMemoryDatabase("ProductDb"));
+builder.Services.AddDbContext<ProductContext>(opt => opt.UseInMemoryDatabase("ProductDb"));
+builder.Services.AddScoped<ProductService>();
 
 var app = builder.Build();
 

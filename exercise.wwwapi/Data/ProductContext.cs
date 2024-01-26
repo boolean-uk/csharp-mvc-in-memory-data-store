@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace exercise.wwwapi.Data
 {
-    public class ProductContex : DbContext
+    public class ProductContext : DbContext
     {
-        public ProductContex(DbContextOptions<ProductContex> options) : base(options) { }
+        public ProductContext(DbContextOptions<ProductContext> options) : base(options) { }
 
         public DbSet<InternalProduct> Products { get; set; }
     }

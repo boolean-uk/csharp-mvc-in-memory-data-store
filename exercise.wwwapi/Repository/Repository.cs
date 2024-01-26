@@ -6,10 +6,10 @@ namespace exercise.wwwapi.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private ProductContex _context;
+        private ProductContext _context;
         private DbSet<T> _dbSet;
 
-        public Repository(ProductContex context)
+        public Repository(ProductContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();

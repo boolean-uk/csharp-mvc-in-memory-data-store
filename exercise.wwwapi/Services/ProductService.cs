@@ -5,20 +5,26 @@ namespace exercise.wwwapi.Services
 {
     public class ProductService
     {
-        private static ProductContex _context;
-        public ProductService(ProductContex productContext) 
+        private readonly ProductContext _context;
+        public ProductService(ProductContext productContext)
         {
             _context = productContext;
         }
 
-        public static InternalProduct ConvertProduct(Product product) 
+        public InternalProduct? CreateInternalProduct(Product product)
         {
-            return new InternalProduct(product.Name, product.Category, product.Price);
+            InternalProduct internalProduct = new InternalProduct(product.Name, product.Category, product.Price);
+
+            _context.Products.Add(internalProduct);
+
+            _context.SaveChanges();
+
+            return internalProduct;
         }
 
-        public static InternalProduct? ConvertProduct(Product product, int id)
+        public InternalProduct? UpdateInternalProduct(int id, Product product)
         {
-            InternalProduct? internalProduct = _context.Products.Find(id);
+            var internalProduct = _context.Products.Find(id);
 
             if (internalProduct == null)
                 return null;
@@ -26,6 +32,8 @@ namespace exercise.wwwapi.Services
             internalProduct.Name = product.Name;
             internalProduct.Category = product.Category;
             internalProduct.Price = product.Price;
+
+            _context.SaveChanges();
 
             return internalProduct;
         }
