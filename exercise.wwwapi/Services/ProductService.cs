@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Model;
+using exercise.wwwapi.Repository;
 
 namespace exercise.wwwapi.Services
 {
@@ -11,18 +12,14 @@ namespace exercise.wwwapi.Services
             _context = productContext;
         }
 
-        public InternalProduct? CreateInternalProduct(Product product)
+        public InternalProduct? CreateInternalProduct(IRepository<InternalProduct> repository, Product product)
         {
             InternalProduct internalProduct = new InternalProduct(product.Name, product.Category, product.Price);
 
-            _context.Products.Add(internalProduct);
-
-            _context.SaveChanges();
-
-            return internalProduct;
+            return repository.Create(internalProduct);
         }
 
-        public InternalProduct? UpdateInternalProduct(int id, Product product)
+        public InternalProduct? UpdateInternalProduct(IRepository<InternalProduct> repository, int id, Product product)
         {
             var internalProduct = _context.Products.Find(id);
 
@@ -33,9 +30,7 @@ namespace exercise.wwwapi.Services
             internalProduct.Category = product.Category;
             internalProduct.Price = product.Price;
 
-            _context.SaveChanges();
-
-            return internalProduct;
+            return repository.Update(id, internalProduct);
         }
     }
 }

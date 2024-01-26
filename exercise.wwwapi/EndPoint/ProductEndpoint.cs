@@ -48,7 +48,7 @@ namespace exercise.wwwapi.EndPoint
                 return TypedResults.BadRequest("Product name already exists.");
             }
 
-            var updatedProduct = productService.CreateInternalProduct(product);
+            var updatedProduct = productService.CreateInternalProduct(repository, product);
             if (updatedProduct == null)
             {
                 return TypedResults.NotFound("Product not found.");
@@ -69,7 +69,7 @@ namespace exercise.wwwapi.EndPoint
             if (repository.NameExists(product.Name))
                 return TypedResults.BadRequest("Product name already exists.");
 
-            var updatedProduct = productService.UpdateInternalProduct(id, product);
+            var updatedProduct = productService.UpdateInternalProduct(repository, id, product);
             if (updatedProduct == null)
             {
                 return TypedResults.NotFound("Product not found.");
