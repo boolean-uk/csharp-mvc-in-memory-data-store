@@ -37,6 +37,7 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> GetAProduct(IProductRepository productRepository, int id)
         {
             if (productRepository.GetAProduct(id) == default)
@@ -47,31 +48,58 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> AddProduct(IProductRepository productRepository, ProductPost product)
         {
-            
-            
-            
+            if (productRepository.GetAllProducts().Any(x => x.Name.Equals(product.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                return Results.BadRequest("Product with provided name already exists");
+            }
+
             var newProduct = new Product() { Name = product.Name, Category = product.Category, Price = product.Price };
             productRepository.AddProduct(newProduct);         
             return TypedResults.Created($"/{newProduct.Id}", newProduct);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> DeleteProduct(IProductRepository productRepository, int id)
         {
-            if (productRepository.GetAProduct(id) == default)
+            if (!productRepository.GetAllProducts().Any(x => x.Id == id))
             {
-                return TypedResults.NotFound("Product not found");
+                return TypedResults.NotFound("Product not found.");
             }
-            return TypedResults.Ok(productRepository.DeleteProduct(id));
+            var result = productRepository.DeleteProduct(id);
+            return result != null ? TypedResults.Ok(result) : Results.NotFound();
         }
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+
         public static async Task<IResult> UpdateProduct(IProductRepository productRepository, int id, ProductPut product)
         {
+            if (!productRepository.GetAllProducts().Any(x => x.Id == id))
+            {
+                return TypedResults.NotFound("Product not found.");
+            }
+            Product prod = productRepository.GetAProduct(id);
 
-            return TypedResults.Ok(productRepository.UpdateProduct(id, product));
+            if (product.Name != null)
+            {
+                if (productRepository.GetAllProducts().Any(x => x.Name == product.Name))
+                {
+                    return Results.BadRequest("Product with provided name already exists");
+                }
+            }
+            prod.Name = product.Name != null ? product.Name : prod.Name;
+            prod.Category = product.Category != null ? product.Category : prod.Category;
+            prod.Price = product.Price != 0 ? product.Price : prod.Price;
+
+            productRepository.UpdateProduct(id,prod);
+
+            return TypedResults.Created($"/{prod.Id}", prod);
+
         }
     }
 }

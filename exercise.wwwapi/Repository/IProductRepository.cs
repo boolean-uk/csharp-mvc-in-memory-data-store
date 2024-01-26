@@ -8,7 +8,7 @@ namespace exercise.wwwapi.Repository
         IEnumerable<Product> GetAllProducts();
         Product AddProduct(Product product);
         
-        Product UpdateProduct(int id, ProductPut productPut);
+        Product UpdateProduct(int id, Product product);
         Product GetAProduct(int id);
         Product DeleteProduct(int id);
     }

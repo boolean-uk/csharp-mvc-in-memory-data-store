@@ -46,12 +46,12 @@ namespace exercise.wwwapi.Repository
             return prod;
         }
 
-        public Product UpdateProduct(int id, ProductPut productPut)
+        public Product UpdateProduct(int id, Product product)
         {
             Product prod = _db.Products.FirstOrDefault(p => p.Id == id);
-            prod.Price = productPut.Price;
-            prod.Name = productPut.Name;
-            prod.Category = productPut.Category;
+            prod.Price = product.Price;
+            prod.Name = product.Name;
+            prod.Category = product.Category;
             _db.SaveChanges();
             return prod;
         }
