@@ -1,5 +1,6 @@
 using exercise.wwwapi.Controller;
 using exercise.wwwapi.Data;
+using exercise.wwwapi.Models;
 using exercise.wwwapi.Repository;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("ProductDb"));
-builder.Services.AddScoped<IRepository, ProductRepository>();
+builder.Services.AddScoped<IRepository<Product>, ProductRepository<Product>>();
 
 var app = builder.Build();
 

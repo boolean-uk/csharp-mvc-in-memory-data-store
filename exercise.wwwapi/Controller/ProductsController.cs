@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Models;
 using exercise.wwwapi.Repository;
+using exercise.wwwapi.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace exercise.wwwapi.Controller
@@ -49,36 +50,40 @@ namespace exercise.wwwapi.Controller
 
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static async Task<IResult> PostProduct(IRepository repository, ProductPost productPost)
+        public static async Task<IResult> PostProduct(IRepository<Product> repository, ProductPost productPost)
         {
-            Product? prod = repository.PostProduct(productPost);
-            if (prod == null) 
+            if (!ProductUtils.ProductNameIsAvailable(repository, productPost.Name))
             {
-                return TypedResults.BadRequest("Product with the provided name already exists.");
+                return TypedResults.BadRequest("Product with provided name already exists.");
             }
-            return TypedResults.Created($"/{prod.Id}", prod);
+    
+            Product validProduct = new(productPost.Name, productPost.Category, productPost.Price);
+
+            Product insertedProduct = repository.Insert(validProduct);
+            return TypedResults.Created($"/{insertedProduct.Id}", insertedProduct);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> GetProducts(IRepository repository, string? category) 
+        public static async Task<IResult> GetProducts(IRepository<Product> repository, string? category) 
         {
-            IEnumerable<Product?> prods = repository.GetProducts(category);
-            if (prods.Count() > 0)
-            {
-                return TypedResults.Ok(prods);
-            }
-            else 
+            IEnumerable<Product?> prods = repository.Get();
+            if (prods.Count() < 1)
             {
                 return TypedResults.NotFound("No products in the provided category were found.");
             }
+            if (category == null)
+            {
+                return TypedResults.Ok(prods);
+            }
+            return TypedResults.Ok(prods.Where(e => e.Category.ToLower() == category.ToLower()).ToList());
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> GetSpecificProduct(IRepository repository, int id) 
+        public static async Task<IResult> GetSpecificProduct(IRepository<Product> repository, int id) 
         {
-            Product? prod = repository.GetSpecificProduct(id);
+            Product? prod = repository.GetById(id);
             if (prod != null)
             {
                 return TypedResults.Ok(prod);
@@ -92,26 +97,31 @@ namespace exercise.wwwapi.Controller
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> PutProduct(IRepository repository, int id, ProductPut productPut) 
+        public static async Task<IResult> PutProduct(IRepository<Product> repository, int id, ProductPut productPut) 
         {
-            Tuple<Product?, int> res = repository.PutProduct(id, productPut);
-            if (res.Item2 == 201 && res.Item1 != null)
+            Product? tableEntity = repository.GetById(id);
+            if (tableEntity == null) 
             {
-                return TypedResults.Created($"/{res.Item1.Id}", res.Item1);
-            } else if (res.Item2 == 400)
+                return TypedResults.NotFound("Product not found");
+            }
+            if (!ProductUtils.ProductNameIsAvailable(repository, productPut.Name)) 
             {
                 return TypedResults.BadRequest("Product with provided name already exists.");
-            } else 
-            {
-                return TypedResults.NotFound("Product not found.");
-            }                    
+            }
+
+            tableEntity.Name = productPut.Name ?? tableEntity.Name;
+            tableEntity.Category = productPut.Category ?? tableEntity.Category;
+            tableEntity.Price = productPut.Price;
+            
+            repository.Update(tableEntity);
+            return TypedResults.Created($"/{id}", productPut);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> DeleteProduct(IRepository repository, int id) 
+        public static async Task<IResult> DeleteProduct(IRepository<Product> repository, int id) 
         {
-            Product? prod = repository.DeleteProduct(id);
+            Product? prod = repository.Delete(id);
             if (prod is null)
             {
                 return TypedResults.NotFound("Product not found.");
