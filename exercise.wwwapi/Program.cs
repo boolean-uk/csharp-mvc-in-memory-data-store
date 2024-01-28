@@ -13,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("ProductDb"));
-builder.Services.AddScoped<IRepository<Product>, ProductRepository<Product>>();
+builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
 
 var app = builder.Build();
 

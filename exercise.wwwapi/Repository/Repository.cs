@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace exercise.wwwapi.Repository
 {
-    public class ProductRepository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private DataContext _db;
         private DbSet<T> _table = null;
 
-        public ProductRepository(DataContext db)
+        public Repository(DataContext db)
         {
             _db = db;
             _table = _db.Set<T>();
