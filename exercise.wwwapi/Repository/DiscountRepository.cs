@@ -7,9 +7,9 @@ namespace exercise.wwwapi.Repository
     public class DiscountRepository : IDiscountRepository
     {
 
-        private readonly DiscountContext _context;
+        private readonly ProductContext _context;
 
-        public DiscountRepository(DiscountContext context)
+        public DiscountRepository(ProductContext context)
         {
             _context = context;
         }

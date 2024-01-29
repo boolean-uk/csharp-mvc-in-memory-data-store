@@ -48,6 +48,7 @@ namespace exercise.wwwapi.Repository
             existingProduct.Name = product.Name;
             existingProduct.Category = product.Category;
             existingProduct.Price = product.Price;
+            existingProduct.DiscountId = product.DiscountId;
             await _context.SaveChangesAsync();
         }
 

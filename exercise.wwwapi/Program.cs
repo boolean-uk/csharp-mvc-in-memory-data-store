@@ -8,11 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 // Add DbContexts for Product and Discount
 builder.Services.AddDbContext<ProductContext>(options => options.UseInMemoryDatabase("ProductDB"));
-builder.Services.AddDbContext<DiscountContext>(options => options.UseInMemoryDatabase("DiscountDB"));
-
 // Add repositories for Product and Discount
 builder.Services.AddScoped<IProductRepository , ProductRepository>();
 builder.Services.AddScoped<IDiscountRepository , DiscountRepository>();
