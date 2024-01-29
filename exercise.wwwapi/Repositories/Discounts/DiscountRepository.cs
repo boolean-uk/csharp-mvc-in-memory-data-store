@@ -1,6 +1,6 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Models.Discounts;
-using exercise.wwwapi.Models.Products;
+
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -10,7 +10,11 @@ namespace exercise.wwwapi.Repositories.Discounts
     {
         private DiscountContext _db;
         private int current_id = 0;
-        public DiscountRepository(DiscountContext db) { _db = db; }
+        public DiscountRepository(DiscountContext db) 
+        { 
+            _db = db; 
+        }
+
 
 
 

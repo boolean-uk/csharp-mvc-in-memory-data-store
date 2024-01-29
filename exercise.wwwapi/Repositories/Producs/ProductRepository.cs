@@ -1,5 +1,7 @@
 ﻿using exercise.wwwapi.Data;
+using exercise.wwwapi.Models.Discounts;
 using exercise.wwwapi.Models.Products;
+using exercise.wwwapi.Repositories.Discounts;
 using Microsoft.EntityFrameworkCore;
 
 namespace exercise.wwwapi.Repositories.Producs
@@ -8,11 +10,13 @@ namespace exercise.wwwapi.Repositories.Producs
     {
 
         private ProductContext _db;
+        private DiscountContext _discountContext;
         private int _id = 0;
 
-        public ProductRepository(ProductContext db)
+        public ProductRepository(ProductContext db, DiscountContext discount)
         {
             _db = db;
+            _discountContext = discount;
         }
 
         public async Task<Product> AddProduct(ProductPostPayload payload)
@@ -132,14 +136,42 @@ namespace exercise.wwwapi.Repositories.Producs
             return updatedProduct;
         }
 
-        public Task<bool> AttachDiscountToProduct(int product_id, int discount_id)
+        public async Task<bool> AttachDiscountToProduct(int product_id, int discount_id)
         {
-            throw new NotImplementedException();
+            var product = await _db._products.Include(p => p.Discounts).FirstAsync(p => p.Id == product_id);
+            var discount = await _discountContext._discounts.FindAsync(discount_id);
+
+            if (product != null && discount != null)
+            {
+                product.Discounts.Add(discount);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            return false;
+
+            
+            /*
+            var product = await _db._products.FirstOrDefaultAsync(p => p.Id == product_id);
+            var discount = await _discountContext._discounts.FirstOrDefaultAsync(d => d.Id == discount_id);
+            if (product != null && discount != null)
+            {
+                discount.ProductId = product_id;
+                await _db.SaveChangesAsync();
+                return true;
+            }
+
+            return false;*/
         }
 
-        public Task<bool> RemoveDiscountFromProduct(int product_id)
+        public async Task<bool> RemoveDiscountFromProduct(int product_id)
         {
-            throw new NotImplementedException();
+            var discount = await _discountContext._discounts.FirstOrDefaultAsync(d => d.ProductId == product_id);
+            if (discount != null) {
+                discount.ProductId = -1;
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

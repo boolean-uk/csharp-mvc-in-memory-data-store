@@ -1,4 +1,6 @@
-﻿using exercise.wwwapi.Models.Products;
+﻿using exercise.wwwapi.Models.Discounts;
+using exercise.wwwapi.Models.Products;
+using exercise.wwwapi.Repositories.Discounts;
 using exercise.wwwapi.Repositories.Producs;
 
 namespace exercise.wwwapi.Endpoints
@@ -14,6 +16,30 @@ namespace exercise.wwwapi.Endpoints
             productsGroup.MapPost("/", AddProduct);
             productsGroup.MapPut("/{_id}", UpdateProduct);
             productsGroup.MapDelete("({_id}", DeleteProduct);
+
+            // new endpoints
+            productsGroup.MapPut("/{product_id}/attachDiscount/{discount_id}", AttatchDiscounToProduct);
+            productsGroup.MapPut("/{product_id}/ditachDiscount", DetachDiscountFromProduct);
+        }
+
+        private static async Task<IResult> DetachDiscountFromProduct(int product_id, IProductRepository product)
+        {
+            bool isDetached = await product.RemoveDiscountFromProduct(product_id);
+            return isDetached
+                ? TypedResults.Ok(isDetached)
+                : TypedResults.NotFound($"Product: {product_id} could not be found");
+        }
+
+        private static async Task<IResult> AttatchDiscounToProduct(int product_id, int discount_id, IProductRepository product)
+        {
+            bool isAttached = await product.AttachDiscountToProduct(product_id, discount_id);
+            if (isAttached)
+            {
+                var tmpProduct = await product.getProductById(product_id);
+                return TypedResults.Ok(tmpProduct);
+            }
+            
+            return TypedResults.NotFound($"Product: {product_id} or Discount: {discount_id} could not be found");
         }
 
         private static async Task<IResult> DeleteProduct(int _id, IProductRepository product)
