@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Models;
 using exercise.wwwapi.Repository;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using static System.Reflection.Metadata.BlobBuilder;
 
@@ -33,6 +34,11 @@ namespace exercise.wwwapi.Endpoints
         public static IResult CreateProduct(IProductRepository products, ProductPostPayload newProductData)
         {
             int discountAmount = 0;
+            Product product = new Product();
+            //foreach(var item in product.Discounts) 
+            //{
+            //    discountAmount += item.PriceOff;
+            //}
             discountAmount = newProductData.discount;
             if (newProductData.name == null)
             {
@@ -47,7 +53,7 @@ namespace exercise.wwwapi.Endpoints
                 return TypedResults.BadRequest("price must be positive");
             }
             int newPrice = newProductData.price - discountAmount;
-            Product product = products.AddProduct(newProductData.name, newProductData.category, newProductData.price);//Clip board: newPrice
+            product = products.AddProduct(newProductData.name, newProductData.category, newPrice);//Clip board: ProductData.price
             Discount discount = products.AddDiscount(discountAmount, product.Id);
             return TypedResults.Created($"/products{product.Id}", product);
         }
