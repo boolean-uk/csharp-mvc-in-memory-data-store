@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Antiforgery;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace exercise.wwwapi.Model
 {
@@ -7,11 +8,11 @@ namespace exercise.wwwapi.Model
     {
         public int Id { get; set; }
 
-        [MaxLength(12)]
         public string Name { get; set; }
 
         public string Category { get; set; }
 
         public int Price { get; set; }
+
     }
 }

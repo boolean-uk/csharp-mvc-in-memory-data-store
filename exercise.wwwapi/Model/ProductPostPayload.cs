@@ -5,8 +5,6 @@ namespace exercise.wwwapi.Model
 {
     public class ProductPostPayload
     {
-
-        [MaxLength(12)]
         public string Name { get; set; }
 
         public string Category { get; set; }

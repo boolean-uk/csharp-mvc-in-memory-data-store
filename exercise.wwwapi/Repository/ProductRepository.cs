@@ -1,6 +1,9 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace exercise.wwwapi.Repository
 {
@@ -13,35 +16,38 @@ namespace exercise.wwwapi.Repository
             _db = db;
         }
 
-        public List<Product> GetAllProducts(string? filter)
+        public async Task<List<Product>> GetAllProducts(string? filter)
         {
 
             if (filter != null)
             {
-                return _db.Products.Where(x => x.Category == filter).ToList();
+                return await _db.Products.Where(x => x.Category == filter).ToListAsync();
             }
-            return _db.Products.ToList();
+            return await _db.Products.ToListAsync();
         }
 
-        public Product AddProduct(string name, string category, int price)
+        public async Task<Product> AddProduct(string name, string category, int price)
         {
-        
-            var prod = new Product { Name = name, Category = category, Price = price };
 
-            _db.Products.Add(prod);
-            _db.SaveChanges();
+            // Discount disc = _db.Discounts.First(x => x.Id == discId);
+
+            var prod = new Product { Name = name, Category = category, Price = price};
+
+            
+            _db.Add(prod);
+            await _db.SaveChangesAsync();
 
             return prod;
         }
 
-        public Product? GetProduct(int id)
+        public async Task<Product?> GetProduct(int id)
         {
-            return _db.Products.FirstOrDefault(x => x.Id == id);
+            return await _db.Products.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Product? UpdateProduct(int id, ProductUpdatePayload updateData)
+        public async Task<Product?> UpdateProduct(int id, ProductUpdatePayload updateData)
         {
-            var prod = GetProduct(id);
+            var prod = await GetProduct(id);
 
             if (prod == null)
             {
@@ -75,19 +81,19 @@ namespace exercise.wwwapi.Repository
                 throw new Exception("No product update!");
             }
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return prod;
         }
 
-        public bool DeleteProduct(int id)
+        public async Task<bool> DeleteProduct(int id)
         {
-            var prod = GetProduct(id);
+            var prod = await GetProduct(id);
 
             if (prod == null) return false;
 
-            _db.Products.Remove(prod); 
-            _db.SaveChanges();
+            _db.Products.Remove(prod); //Products.Remove(prod); 
+            await _db.SaveChangesAsync();
             return true;
         }
     }

@@ -47,24 +47,28 @@ namespace exercise.wwwapi.Endpoints
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static IResult GetAllProducts(IProductRepository products, string? category)
+        public static async Task<IResult> GetAllProducts(IProductRepository products, string? category)
         {
 
-            List<string> cats = products.GetAllProducts(null).Select(x => x.Category).ToList();
+            List<Product> catss = await products.GetAllProducts(null); // .Select(x => x.Category).ToList();
+
+            List<string> cats = catss.Select(x => x.Category).ToList();
 
             if (category != null && !cats.Contains(category))
             {
                 return TypedResults.NotFound("No products of the provided category were found.");
             }
 
-            return TypedResults.Ok(products.GetAllProducts(category));
+            List<Product> res = await products.GetAllProducts(category);
+
+            return TypedResults.Ok(res);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static IResult GetProduct(IProductRepository products, int id)
+        public static async Task<IResult> GetProduct(IProductRepository products, int id)
         {
-            Product? prod = products.GetProduct(id);
+            Product? prod = await products.GetProduct(id);
             if (prod == null)
             {
                 return TypedResults.NotFound($"Product not found.");
@@ -77,19 +81,22 @@ namespace exercise.wwwapi.Endpoints
 
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static IResult CreateProduct([FromBody] ProductPostPayload newData,  IProductRepository products) 
+        public static async Task<IResult> CreateProduct([FromBody] ProductPostPayload newData,  int amount, IProductRepository products) 
         {
            
             if (newData.Name == null || newData.Category == null || newData.Price == null) return TypedResults.BadRequest("All fields are required.");
             if (newData.Name.Length == 0 || newData.Category.Length == 0 || newData.Price < 0) return TypedResults.BadRequest("No empty fields or negative prices!");
 
-            bool alreadyExists = products.GetAllProducts(null).Exists(x => x.Name == newData.Name);
+            List<Product> res = await products.GetAllProducts(null); //.Exists(x => x.Name == newData.Name);
+            bool alreadyExists = res.Exists(x => x.Name == newData.Name);
+
             if (alreadyExists)
             {
                return TypedResults.BadRequest("Product with provided name already exists.");
             }
 
-            Product prod = products.AddProduct(newData.Name, newData.Category, newData.Price);
+            Product prod = await products.AddProduct(newData.Name, newData.Category, newData.Price);
+
             return TypedResults.Created($"/tasks{prod.Id}", prod);
         } 
 
@@ -98,22 +105,22 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static IResult UpdateProduct(IProductRepository products, int id, ProductUpdatePayload updateData)
+        public static async Task<IResult> UpdateProduct(IProductRepository products, int id, ProductUpdatePayload updateData)
         {
             
-            Product? prod = products.GetProduct(id); // products.UpdateProduct(id, updateData);
+            Product? prod = await products.GetProduct(id); // products.UpdateProduct(id, updateData);
 
             if (prod == null)
             {
                return TypedResults.NotFound($"Product not found.");
-            }            
-          
-            bool alreadyExists = products.GetAllProducts(null).Where(x => x.Id != id).ToList().Exists(x => x.Name == updateData.name);
-            bool alreadyExists2 = products.GetAllProducts(null).Exists(x => x.Name == updateData.name);
+            }
+
+            List<Product> res = await products.GetAllProducts(null); //.Where(x => x.Id != id).ToList().Exists(x => x.Name == updateData.name);
+            bool alreadyExists = res.Where(x => x.Id != id).ToList().Exists(x => x.Name == updateData.name);
 
             if (!alreadyExists)
             {
-                Product? upprod = products.UpdateProduct(id, updateData);
+                Product? upprod = await products.UpdateProduct(id, updateData);
                 return TypedResults.Created($"/tasks{upprod.Id}", upprod);
             }
 
@@ -122,16 +129,18 @@ namespace exercise.wwwapi.Endpoints
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static IResult DeleteProduct(IProductRepository products, int id)
+        public static async Task<IResult> DeleteProduct(IProductRepository products, int id)
         {
 
-            Product? prod = products.GetProduct(id);
-            bool res = products.DeleteProduct(id);
+            Product? prod = await products.GetProduct(id);
+           
 
             if (prod == null)
             {
                 return TypedResults.NotFound($"Product not found.");
             }
+
+            bool res = await products.DeleteProduct(id);
 
             if (res == false)
             {

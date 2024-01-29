@@ -18,7 +18,9 @@ builder.Services.AddDbContext<ProductContext>(opt =>
     opt.UseInMemoryDatabase("ProductList");
 });
 
+
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 
 builder.Services.AddMvc().ConfigureApiBehaviorOptions(options =>
 {
@@ -41,6 +43,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.ConfigureProductEndpoints();
+app.ConfigureDiscountEndpoints();
 
 app.Run();
 
