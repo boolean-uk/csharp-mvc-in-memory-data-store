@@ -1,6 +1,12 @@
 ﻿namespace exercise.wwwapi.Endpoints
 {
-    public class DiscountEndpoints
+    public static class DiscountEndpoints
     {
+
+        public static void ConfigureDiscountEndpoints(this WebApplication app)
+        {
+            // endpoints
+            var discountGroup = app.MapGroup("/discount");
+        }
     }
 }

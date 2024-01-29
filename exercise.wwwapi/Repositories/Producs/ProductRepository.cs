@@ -131,5 +131,15 @@ namespace exercise.wwwapi.Repositories.Producs
 
             return updatedProduct;
         }
+
+        public Task<bool> AttachDiscountToProduct(int product_id, int discount_id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RemoveDiscountFromProduct(int product_id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
