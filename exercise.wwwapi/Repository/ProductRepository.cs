@@ -12,7 +12,6 @@ namespace exercise.wwwapi.Repository
         {
             _context = context;
         }
-
         public async Task<IEnumerable<Product>> GetProducts(string category)
         {
             if(string.IsNullOrEmpty(category))

@@ -9,6 +9,7 @@ namespace exercise.wwwapi.Endpoints
     public class ProductsController : ControllerBase
     {
         private readonly IProductRepository _repository;
+        private readonly IDiscountRepository _discountRepository;
 
         public ProductsController(IProductRepository repository)
         {
@@ -42,7 +43,7 @@ namespace exercise.wwwapi.Endpoints
         {
             if(!ModelState.IsValid)
             {
-                return BadRequest(new { message = "Price must be an integer, something else was provided." });
+                return BadRequest(new { message = "Invalid product details." });
             }
             var existingProduct = await _repository.GetProductByName(product.Name);
             if(existingProduct != null)
@@ -58,7 +59,7 @@ namespace exercise.wwwapi.Endpoints
         {
             if(!ModelState.IsValid)
             {
-                return BadRequest(new { message = "Price must be an integer, something else was provided." });
+                return BadRequest(new { message = "Invalid product details." });
             }
             var existingProduct = await _repository.GetProduct(id);
             if(existingProduct == null)
@@ -79,5 +80,26 @@ namespace exercise.wwwapi.Endpoints
             }
             return Ok(product);
         }
+
+        [HttpPut("{id}/discount/{discountId}")]
+        public async Task<IActionResult> AttachDiscountToProduct(int id , int discountId)
+        {
+            var product = await _repository.GetProduct(id);
+            if(product == null)
+            {
+                return NotFound(new { message = "Product not found." });
+            }
+
+            var discount = await _discountRepository.GetDiscount(discountId);
+            if(discount == null)
+            {
+                return NotFound(new { message = "Discount not found." });
+            }
+
+            product.DiscountId = discountId;
+            await _repository.UpdateProduct(id , product);
+            return NoContent();
+        }
+
     }
 }

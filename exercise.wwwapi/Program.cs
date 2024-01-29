@@ -5,13 +5,17 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<ProductContext>(options => options.UseInMemoryDatabase("ProductDB"));
-builder.Services.AddScoped<IProductRepository , ProductRepository>();
 
+// Add DbContexts for Product and Discount
+builder.Services.AddDbContext<ProductContext>(options => options.UseInMemoryDatabase("ProductDB"));
+builder.Services.AddDbContext<DiscountContext>(options => options.UseInMemoryDatabase("DiscountDB"));
+
+// Add repositories for Product and Discount
+builder.Services.AddScoped<IProductRepository , ProductRepository>();
+builder.Services.AddScoped<IDiscountRepository , DiscountRepository>();
 
 var app = builder.Build();
 
@@ -27,4 +31,3 @@ if(app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.Run();
-
