@@ -1,50 +1,51 @@
 using exercise.wwwapi.Data;
 using exercise.wwwapi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace exercise.wwwapi.Repository {
     public class ProductRepository : IProductRepository
     {
-         private ProductContext _db;
+         private readonly ProductContext _db;
 
             
         public ProductRepository(ProductContext product) {
             _db = product;
         }
 
-        public Product AddProduct(string Name, string Category, int Price)
+        public async Task<Product> AddProduct(string Name, string Category, int Price)
         {
             Product product = new Product() {Name = Name, Category = Category, Price = Price};
-            _db.Products.Add(product);
+            await _db.Products.AddAsync(product);
             _db.SaveChanges();
             return product;
         }
 
-        public Product? DeleteProduct(int Id)
+        public async Task<Product> DeleteProduct(int Id)
         {
-            Product? product = GetProduct(Id);
+            Product? product = await GetProduct(Id);
             if (product == null)
             {
                 return null;
             }
              _db.Products.Remove(product);
-            _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
             return product;     
         }
 
-        public List<Product> GetAllProducts()
+        public async Task<List<Product>> GetAllProducts()
         {
-            return [.. _db.Products];
+            List<Product> list = await _db.Products.ToListAsync();
+            return list;
         }
 
-        public Product? GetProduct(int Id)
+        public async Task<Product> GetProduct(int Id)
         {
-            var product = _db.Products.FirstOrDefault(p => p.Id == Id);
-            return product;
+            return await _db.Products.FirstOrDefaultAsync(p => p.Id == Id);
         }
 
-        public Product? UpdateProduct(int Id, ProductUpdatePayload updateData)
+        public async Task<Product> UpdateProduct(int Id, ProductUpdatePayload updateData)
         {
-            Product? product = _db.Products.Find(Id);
+            Product? product = await _db.Products.FindAsync(Id);
             if (product == null)
             {
                 return null;
@@ -52,9 +53,10 @@ namespace exercise.wwwapi.Repository {
 
             ComparePayload(ref product, updateData);
 
-            _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
             return product;
         }
+
 
         private Product ComparePayload(ref Product product, ProductUpdatePayload data)
         {

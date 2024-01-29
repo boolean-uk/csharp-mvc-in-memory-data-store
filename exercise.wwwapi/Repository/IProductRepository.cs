@@ -6,12 +6,12 @@ namespace exercise.wwwapi.Repository {
 
     public interface IProductRepository {
 
-        public List<Product> GetAllProducts();
-        public Product AddProduct(string Name, string Category, int Price);
+        public Task<List<Product>> GetAllProducts();
+        public Task<Product> AddProduct(string Name, string Category, int Price);
 
-        public Product? GetProduct(int Id);
+        public Task<Product> GetProduct(int Id);
 
-        public Product? DeleteProduct(int Id);
-        public Product? UpdateProduct(int Id, ProductUpdatePayload updateData);
+        public Task<Product> DeleteProduct(int Id);
+        public Task<Product> UpdateProduct(int Id, ProductUpdatePayload updateData);
     }
 }
