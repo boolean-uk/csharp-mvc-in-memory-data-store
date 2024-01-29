@@ -1,10 +1,9 @@
-﻿
-using exercise.wwwapi.Models;
-using exercise.wwwapi.Repositories;
+﻿using exercise.wwwapi.Models.Products;
+using exercise.wwwapi.Repositories.Producs;
 
 namespace exercise.wwwapi.Endpoints
 {
-    public static class ProducEndpoints
+    public static class ProductEndpoints
     {
 
         public static void ConfigureProductEndpoints(this WebApplication app)
@@ -42,11 +41,11 @@ namespace exercise.wwwapi.Endpoints
             
         }
 
-        private static IResult AddProduct(IProductRepository product, ProductPostPayload payload)
+        private static async Task<IResult> AddProduct(IProductRepository product, ProductPostPayload payload)
         {
             try
             {
-                var result = product.AddProduct(payload);
+                var result = await product.AddProduct(payload);
                 if (result == null)
                 {
                     return TypedResults.BadRequest("Invalid payload");

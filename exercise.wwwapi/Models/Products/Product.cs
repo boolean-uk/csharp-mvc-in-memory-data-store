@@ -1,4 +1,4 @@
-﻿namespace exercise.wwwapi.Models
+﻿namespace exercise.wwwapi.Models.Products
 {
     public class Product
     {

@@ -1,8 +1,8 @@
 ﻿using exercise.wwwapi.Data;
-using exercise.wwwapi.Models;
+using exercise.wwwapi.Models.Products;
 using Microsoft.EntityFrameworkCore;
 
-namespace exercise.wwwapi.Repositories
+namespace exercise.wwwapi.Repositories.Producs
 {
     public class ProductRepository : IProductRepository
     {
@@ -10,7 +10,8 @@ namespace exercise.wwwapi.Repositories
         private ProductContext _db;
         private int _id = 0;
 
-        public ProductRepository(ProductContext db) {
+        public ProductRepository(ProductContext db)
+        {
             _db = db;
         }
 
@@ -27,12 +28,13 @@ namespace exercise.wwwapi.Repositories
                 _db.Add(newProduct);
                 await _db.SaveChangesAsync();
                 return newProduct;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"An unexpected error occurred: {ex}");
                 return null;
             }
-            
+
         }
 
         private bool isValidPostPayload(ProductPostPayload payload)
@@ -86,7 +88,7 @@ namespace exercise.wwwapi.Repositories
         }
 
         public async Task<Product?> getProductById(int id)
-        {   
+        {
             var result = await _db._products.FirstOrDefaultAsync(p => p.Id == id);
             return result;
         }
@@ -98,11 +100,12 @@ namespace exercise.wwwapi.Repositories
             {
                 return null;
             }
-            
+
 
             bool isUpdated = false;
 
-            if (payload.name != null && payload.name.Length > 0) {
+            if (payload.name != null && payload.name.Length > 0)
+            {
                 updatedProduct.Name = payload.name;
                 isUpdated = true;
             }
@@ -121,7 +124,7 @@ namespace exercise.wwwapi.Repositories
 
             if (!isUpdated)
             {
-                throw new Exception("No update payload entered"); 
+                throw new Exception("No update payload entered");
             }
 
             await _db.SaveChangesAsync();

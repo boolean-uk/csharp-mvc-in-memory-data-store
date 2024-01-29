@@ -1,6 +1,6 @@
 using exercise.wwwapi.Data;
 using exercise.wwwapi.Endpoints;
-using exercise.wwwapi.Repositories;
+using exercise.wwwapi.Repositories.Producs;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

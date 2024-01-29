@@ -1,6 +1,6 @@
-﻿using exercise.wwwapi.Models;
+﻿using exercise.wwwapi.Models.Products;
 
-namespace exercise.wwwapi.Repositories
+namespace exercise.wwwapi.Repositories.Producs
 {
     public interface IProductRepository
     {

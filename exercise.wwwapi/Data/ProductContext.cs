@@ -1,4 +1,4 @@
-﻿using exercise.wwwapi.Models;
+﻿using exercise.wwwapi.Models.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace exercise.wwwapi.Data
