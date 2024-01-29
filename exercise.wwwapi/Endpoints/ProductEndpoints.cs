@@ -100,32 +100,24 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static IResult UpdateProduct(IProductRepository products, int id, ProductUpdatePayload updateData)
         {
-            try
+            
+            Product? prod = products.GetProduct(id); // products.UpdateProduct(id, updateData);
+
+            if (prod == null)
             {
-                Product? prod = products.UpdateProduct(id, updateData);
-                if (prod == null)
-                {
-                    return TypedResults.NotFound($"Product not found.");
-                }
+               return TypedResults.NotFound($"Product not found.");
+            }            
+          
+            bool alreadyExists = products.GetAllProducts(null).Where(x => x.Id != id).ToList().Exists(x => x.Name == updateData.name);
+            bool alreadyExists2 = products.GetAllProducts(null).Exists(x => x.Name == updateData.name);
 
-                bool alreadyExists = products.GetAllProducts(null).Where(x => x.Id != id).ToList().Exists(x => x.Name == updateData.name);
-
-                if (alreadyExists)
-                {
-                    return TypedResults.BadRequest("Product with provided name already exists.");
-                }
-
-                if(updateData.price.GetType() != typeof(int))
-                {
-                    return TypedResults.BadRequest("Not found.");
-                }
-
-                return TypedResults.Created($"/tasks{prod.Id}", prod);
-            }
-            catch (Exception e)
+            if (!alreadyExists)
             {
-                return TypedResults.BadRequest(e.Message);
+                Product? upprod = products.UpdateProduct(id, updateData);
+                return TypedResults.Created($"/tasks{upprod.Id}", upprod);
             }
+
+            return TypedResults.BadRequest("Product with provided name already exists.");
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
