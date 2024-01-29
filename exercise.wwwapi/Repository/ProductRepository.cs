@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Model;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
 
 namespace exercise.wwwapi.Repository
@@ -11,36 +12,45 @@ namespace exercise.wwwapi.Repository
         {
             _db = db;
         }
-        public Product Create(ProductPayload data)
+        public async Task<Product> Create(ProductPayload data)
         {
+            if (await _db.products.AnyAsync(x => x.name == data.name))
+            {
+                throw new Exception();
+            }
             Product newProduct = new Product() { name = data.name, category = data.category, price = data.price};
             _db.Add(newProduct);
             _db.SaveChanges();
             return newProduct;
         }
 
-        public Product Delete(int id)
+        public async Task<Product> Delete(int id)
         {
-            Product? product = _db.products.FirstOrDefault(x => x.id == id);
+            Product? product = await _db.products.FirstOrDefaultAsync(x => x.id == id);
             if (product is null) throw new Exception();
             _db.products.Remove(product);
             _db.SaveChanges();
             return product;
         }
 
-        public List<Product> GetAll()
+        public async Task<List<Product>> GetAll()
         {
-           return _db.products.ToList();
+           return await _db.products.ToListAsync();
         }
 
-        public Product? GetProductByID(int id)
+        public async Task<Product?> GetProductByID(int id)
         {
-            return _db.products.FirstOrDefault(x => x.id == id);
+        //    return _db.products.FirstOrDefault(x => x.id == id);
+            return await _db.products.FirstOrDefaultAsync(x => x.id == id);
         }
 
-        public Product? Update(int id, ProductPayload data)
+        public async Task<Product?> Update(int id, ProductPayload data)
         {
-            Product? result = GetProductByID(id);
+            if (await _db.products.AnyAsync(x => x.name == data.name && x.id != id))
+            {
+                throw new Exception();
+            }
+            Product? result = await GetProductByID(id);
             if (result is null) return null;
             result.name = data.name;
             result.price = data.price;

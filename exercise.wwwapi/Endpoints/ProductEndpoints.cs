@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Model;
 using exercise.wwwapi.Repository;
+using Microsoft.AspNetCore.Diagnostics;
 using System.Collections.Concurrent;
 
 namespace exercise.wwwapi.Endpoints
@@ -16,35 +17,52 @@ namespace exercise.wwwapi.Endpoints
             productGroup.MapDelete("/{id}", DeleteProduct);
         }
 
-        public static IResult GetAllProducts(IProductRepository products)
+        public async static Task<IResult> GetAllProducts(IProductRepository products)
         {
-            return TypedResults.Ok(products.GetAll());
-        }
-
-        public static IResult GetProductByID(IProductRepository products, int id)
-        {
-            Product? result = products.GetProductByID(id);
-            if (result is null) return TypedResults.NotFound();
+            List<Product> result = await products.GetAll();
+            if (result.Count == 0) return TypedResults.NotFound("Not found");
             return TypedResults.Ok(result);
         }
 
-        public static IResult CreateProduct(IProductRepository products, ProductPayload data)
+        public async static Task<IResult> GetProductByID(IProductRepository products, int id)
         {
-            return TypedResults.Created("", products.Create(data));
+            Product? result = await products.GetProductByID(id);
+            if (result is null) return TypedResults.NotFound("Not found");
+            return TypedResults.Ok(result);
         }
 
-        public static IResult UpdateProduct(IProductRepository products, int id, ProductPayload data)
-        {
-            Product? result = products.Update(id, data);
-            if (result is null) return TypedResults.NotFound();
-            return TypedResults.Created("", result);
-        }
-
-        public static IResult DeleteProduct(IProductRepository products, int id)
+        public async static Task<IResult> CreateProduct(IProductRepository products, ProductPayload data)
         {
             try
             {
-                return TypedResults.Ok(products.Delete(id));
+                return TypedResults.Created("", await products.Create(data));
+            }
+            catch
+            {
+                return TypedResults.BadRequest("Not found");
+            }
+        }
+
+        public async static Task<IResult> UpdateProduct(IProductRepository products, int id, ProductPayload data)
+        {
+            try
+            {
+                Product? result = await products.Update(id, data);
+                if (result is null) return TypedResults.NotFound("Not found");
+                return TypedResults.Created("", result);
+            }
+            catch
+            {
+                return TypedResults.BadRequest("Product with that name already exists");
+            }
+
+        }
+
+        public async static Task<IResult> DeleteProduct(IProductRepository products, int id)
+        {
+            try
+            {
+                return TypedResults.Ok(await products.Delete(id));
                 
             }
             catch
@@ -53,5 +71,6 @@ namespace exercise.wwwapi.Endpoints
             }
 
         }
+
     }
 }
