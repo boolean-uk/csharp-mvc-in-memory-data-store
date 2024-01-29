@@ -6,5 +6,7 @@
         public string Name { get; set; }
         public string Catagory { get; set; }
         public int Price { get; set; }
+
+        public List<ProductDeal> Deals { get; set; }
     }
 }

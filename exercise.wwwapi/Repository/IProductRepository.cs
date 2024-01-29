@@ -13,5 +13,7 @@ namespace exercise.wwwapi.Repository
         public Task<Product>? UpdateProduct(Product book, ProductUpdatePayload updateData);
 
         public Task<bool> DeleteProduct(int id);
+
+        public Task<ProductDeal> AddDealToTask(int id, string text);
     }
 }

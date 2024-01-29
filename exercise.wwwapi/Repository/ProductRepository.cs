@@ -39,6 +39,14 @@ namespace exercise.wwwapi.Repository
             return newProduct;
         }
 
+        public async Task<ProductDeal> AddDealToTask(int id, string text)
+        {
+            var newDeal = new ProductDeal() { ProductId = id, Description = text};
+            await _db.AddAsync(newDeal);
+            await _db.SaveChangesAsync();
+            return newDeal;
+        }
+
         public async Task<Product>? GetProduct(int id)
         {
             var task = await _db.Products.FirstOrDefaultAsync(t => t.ID == id);

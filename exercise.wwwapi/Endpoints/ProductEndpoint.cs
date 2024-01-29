@@ -39,6 +39,7 @@ namespace exercise.wwwapi.Endpoints
             if (product == null)
                 return Results.BadRequest("Name already found");
 
+            ProductDeal deal = await products.AddDealToTask(product.ID, "50% off");
             return TypedResults.Created($"/products{product.Name} {product.Catagory} {product.Price}", product);
         }
 
