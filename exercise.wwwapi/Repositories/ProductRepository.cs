@@ -24,7 +24,7 @@ namespace exercise.wwwapi.Repositories
                 }
 
                 var newProduct = new Product() { Id = getNextId(), Name = payload.name, Category = payload.category, Price = payload.price };
-                await Task.Run( () => _db.Add(newProduct));
+                _db.Add(newProduct);
                 await _db.SaveChangesAsync();
                 return newProduct;
             } catch (Exception ex)
@@ -74,7 +74,7 @@ namespace exercise.wwwapi.Repositories
             {
                 return false;
             }
-            await Task.Run( () => _db._products.Remove(deletedProduct));
+            _db._products.Remove(deletedProduct);
             await _db.SaveChangesAsync();
             return true;
         }
