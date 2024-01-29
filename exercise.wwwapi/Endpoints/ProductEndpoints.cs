@@ -13,6 +13,7 @@ namespace exercise.wwwapi.Endpoints {
             students.MapPost("/", CreateProduct);
             students.MapGet("/{Id}", GetProduct);
             students.MapPut("/{Id}", UpdateProduct);
+            students.MapPut("/discount/{Id}", AddDiscountOnProduct);
             students.MapDelete("/{Id}", DeleteProduct);
         }
 
@@ -28,6 +29,14 @@ namespace exercise.wwwapi.Endpoints {
                 return Results.BadRequest(new { Message = "Price cannot be null" });
             Product product = await sr.AddProduct(payload.Name, payload.Category, payload.Price);
             return TypedResults.Created($"/products/{product.Name}", product);
+        }
+
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public static async Task<IResult> AddDiscountOnProduct(IProductRepository sr, DiscountUpdatePayload payload)
+        {
+            Product product = await sr.AddDiscountOnProduct(payload);
+            return TypedResults.Created($"/products/{product.Id}", product);
         }
 
         public static async Task<IResult> GetAllProducts(IProductRepository sr)

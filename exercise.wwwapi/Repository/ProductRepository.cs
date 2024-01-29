@@ -12,6 +12,29 @@ namespace exercise.wwwapi.Repository {
             _db = product;
         }
 
+        public async Task<Product> AddDiscountOnProduct(DiscountUpdatePayload payload)
+        {
+            Product product = await _db.Products.FirstOrDefaultAsync(p => p.Id == payload.ProductId);
+            product.DiscountId = payload.DiscountId;
+            Discount discount = await _db.Discounts.FirstOrDefaultAsync(p => p.Id == payload.DiscountId);
+            product.Discount = discount;
+            await _db.SaveChangesAsync();
+            return product;
+        }
+
+        public async Task<Discount> AddDiscount(int Price)
+        {
+            Discount discount = new Discount() {Price = Price};
+            await _db.Discounts.AddAsync(discount);
+            await _db.SaveChangesAsync();
+            return discount;
+        }
+
+        public async Task<Discount> GetDiscount(int Id)
+        {
+            return await _db.Discounts.FirstOrDefaultAsync(p => p.Id == Id);
+        }
+
         public async Task<Product> AddProduct(string Name, string Category, int Price)
         {
             Product product = new Product() {Name = Name, Category = Category, Price = Price};
