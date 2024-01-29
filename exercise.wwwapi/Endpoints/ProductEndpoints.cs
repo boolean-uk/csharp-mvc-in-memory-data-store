@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Diagnostics;
 namespace exercise.wwwapi.Endpoints
 {
 
+  
     [ApiController]
     public static class ProductEndpoints
     {
@@ -81,7 +82,7 @@ namespace exercise.wwwapi.Endpoints
 
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static async Task<IResult> CreateProduct([FromBody] ProductPostPayload newData,  int amount, IProductRepository products) 
+        public static async Task<IResult> CreateProduct([FromBody] ProductPostPayload newData, IProductRepository products, IDiscountRepository discounts) 
         {
            
             if (newData.Name == null || newData.Category == null || newData.Price == null) return TypedResults.BadRequest("All fields are required.");
@@ -96,6 +97,14 @@ namespace exercise.wwwapi.Endpoints
             }
 
             Product prod = await products.AddProduct(newData.Name, newData.Category, newData.Price);
+
+            int dsc = (int)newData.Discount;
+
+            if (dsc == null)
+            {
+                dsc = 0;
+            }
+            Discount disc = await discounts.AddDiscount(dsc, prod.Id);
 
             return TypedResults.Created($"/tasks{prod.Id}", prod);
         } 

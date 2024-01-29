@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.Extensions.Hosting;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace exercise.wwwapi.Model
 {
@@ -13,6 +15,8 @@ namespace exercise.wwwapi.Model
         public string Category { get; set; }
 
         public int Price { get; set; }
+
+        public List<Discount> Discounts { get; set; }
 
     }
 }

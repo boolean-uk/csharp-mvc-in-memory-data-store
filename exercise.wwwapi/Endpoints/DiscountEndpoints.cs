@@ -24,7 +24,6 @@ namespace exercise.wwwapi.Endpoints
             var group2 = app.MapGroup("discounts");
             group2.MapGet("/", GetAllDiscounts);
             group2.MapGet("/{id}", GetDiscount);
-            group2.MapPost("/", CreateDiscount);
 
             app.UseExceptionHandler(c => c.Run(async context =>
             {
@@ -65,26 +64,7 @@ namespace exercise.wwwapi.Endpoints
             return TypedResults.Ok(prod);
         }
 
-      
-
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static async Task<IResult> CreateDiscount(int amount, IDiscountRepository discounts) 
-        {
-           
-            List<Discount> res = await discounts.GetAllDiscounts(); //.Exists(x => x.Name == newData.Name);
-            bool alreadyExists = res.Exists(x => x.Amount == amount);
-
-            if (alreadyExists)
-            {
-               return TypedResults.BadRequest("Discount with provided amount already exists.");
-            }
-
-            
-            Discount dc = await discounts.AddDiscount(amount);
-
-            return TypedResults.Created($"/discounts{dc.Id}", dc);
-        } 
+     
 
     }
 }

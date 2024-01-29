@@ -8,6 +8,9 @@ namespace exercise.wwwapi.Model
 
         public int Amount { get; set; }
 
+        [ForeignKey("Product")]
+        public int ProductId { get; set; }
+
 
     }
 }

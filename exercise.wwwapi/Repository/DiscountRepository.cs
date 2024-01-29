@@ -22,9 +22,9 @@ namespace exercise.wwwapi.Repository
             return await _db.Discounts.ToListAsync();
         }
 
-        public async Task<Discount> AddDiscount(int amount)
+        public async Task<Discount> AddDiscount(int amount, int id)
         {
-            Discount disc2 = new Discount { Amount = amount };
+            Discount disc2 = new Discount { Amount = amount, ProductId = id };
 
             _db.Discounts.Add(disc2); //.Add(disc);
             _db.SaveChanges(); //.SaveChanges();

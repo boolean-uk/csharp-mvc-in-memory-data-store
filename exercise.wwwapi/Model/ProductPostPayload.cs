@@ -11,5 +11,7 @@ namespace exercise.wwwapi.Model
 
         public int Price { get; set; }
 
+        public int? Discount { get; set; }
+
     }
 }

@@ -29,9 +29,8 @@ namespace exercise.wwwapi.Repository
         public async Task<Product> AddProduct(string name, string category, int price)
         {
 
-            // Discount disc = _db.Discounts.First(x => x.Id == discId);
-
-            var prod = new Product { Name = name, Category = category, Price = price};
+  
+            var prod = new Product { Name = name, Category = category, Price = price };
 
             
             _db.Add(prod);

@@ -8,7 +8,7 @@ namespace exercise.wwwapi.Repository
     {
         public Task<List<Discount>> GetAllDiscounts();
 
-        public Task<Discount> AddDiscount(int amount);
+        public Task<Discount> AddDiscount(int amount, int id);
 
         public Task<Discount?> GetDiscount(int amount);
     }
