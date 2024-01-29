@@ -17,13 +17,16 @@ namespace exercise.wwwapi.Controller.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> GetProducts(IRepository<Product> repository)
+        public static async Task<IResult> GetProducts(IRepository<Product> repository, string category="")
         {
+            if (category.Length > 0)
+            {
+                return TypedResults.Ok(repository.GetAll().Where(x => x.Category.ToLower().Contains(category.ToLower())));
+            }
             return TypedResults.Ok(repository.GetAll());
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> GetProduct(IRepository<Product> repository, int id)
