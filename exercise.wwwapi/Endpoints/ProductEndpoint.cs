@@ -60,7 +60,7 @@ namespace exercise.wwwapi.Endpoints
                 {
                     return TypedResults.NotFound($"No product with {product.Id} found");
                 }
-                return TypedResults.Created($"/products{product.name}", product);
+                return TypedResults.Created($"/products{product.Name}", product);
             }
             catch (Exception e)
             {

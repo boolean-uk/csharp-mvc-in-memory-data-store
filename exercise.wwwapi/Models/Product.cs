@@ -3,9 +3,9 @@
     public class Product
     {
         public int Id { get; set; }
-        public string name { get; set; }
-        public string category { get; set; }
-        public int price { get; set; }
-        public List<Discount> discounts { get; set; }
+        public string Name { get; set; }
+        public string Category { get; set; }
+        public int Price { get; set; }
+        public List<Discount> Discounts { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace exercise.wwwapi.Repository
         }
         public Product AddProduct(string name, string category, int price)
         {
-            var product = new Product() { name = name, category = category, price = price};
+            var product = new Product() { Name = name, Category = category, Price = price};
             _db.Add(product);
             _db.SaveChanges();
             return product;
@@ -45,17 +45,17 @@ namespace exercise.wwwapi.Repository
 
             if (updateData.name != null)
             {
-                product.name = updateData.name;
+                product.Name = updateData.name;
                 hasUpdate = true;
             }
             if (updateData.category != null)
             {
-                product.category = updateData.category;
+                product.Category = updateData.category;
                 hasUpdate = true;
             }
             if (updateData.price != null)
             {
-                product.price = (int)updateData.price;
+                product.Price = (int)updateData.price;
                 hasUpdate = true;
             }
 
