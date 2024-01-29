@@ -138,7 +138,7 @@ namespace exercise.wwwapi.Repositories.Producs
 
         public async Task<bool> AttachDiscountToProduct(int product_id, int discount_id)
         {
-            var product = await _db._products.Include(p => p.Discounts).FirstAsync(p => p.Id == product_id);
+            /*var product = await _db._products.Include(p => p.Discounts).FirstAsync(p => p.Id == product_id);
             var discount = await _discountContext._discounts.FindAsync(discount_id);
 
             if (product != null && discount != null)
@@ -147,10 +147,10 @@ namespace exercise.wwwapi.Repositories.Producs
                 await _db.SaveChangesAsync();
                 return true;
             }
-            return false;
+            return false;*/
 
             
-            /*
+            
             var product = await _db._products.FirstOrDefaultAsync(p => p.Id == product_id);
             var discount = await _discountContext._discounts.FirstOrDefaultAsync(d => d.Id == discount_id);
             if (product != null && discount != null)
@@ -160,7 +160,7 @@ namespace exercise.wwwapi.Repositories.Producs
                 return true;
             }
 
-            return false;*/
+            return false;
         }
 
         public async Task<bool> RemoveDiscountFromProduct(int product_id)

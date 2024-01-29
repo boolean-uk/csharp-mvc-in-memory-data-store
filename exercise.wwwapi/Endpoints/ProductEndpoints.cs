@@ -33,13 +33,15 @@ namespace exercise.wwwapi.Endpoints
         private static async Task<IResult> AttatchDiscounToProduct(int product_id, int discount_id, IProductRepository product)
         {
             bool isAttached = await product.AttachDiscountToProduct(product_id, discount_id);
-            if (isAttached)
+            return isAttached ? TypedResults.Ok(isAttached) : TypedResults.NotFound($"Product: {product_id} or Discount: {discount_id} could not be found");
+            
+            /*if (isAttached)
             {
                 var tmpProduct = await product.getProductById(product_id);
                 return TypedResults.Ok(tmpProduct);
             }
             
-            return TypedResults.NotFound($"Product: {product_id} or Discount: {discount_id} could not be found");
+            return TypedResults.NotFound($"Product: {product_id} or Discount: {discount_id} could not be found"); */
         }
 
         private static async Task<IResult> DeleteProduct(int _id, IProductRepository product)
