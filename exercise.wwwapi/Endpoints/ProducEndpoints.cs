@@ -17,9 +17,9 @@ namespace exercise.wwwapi.Endpoints
             productsGroup.MapDelete("({_id}", DeleteProduct);
         }
 
-        private static IResult DeleteProduct(int _id, IProductRepository product)
+        private static async Task<IResult> DeleteProduct(int _id, IProductRepository product)
         {
-            bool isDeleated = product.DeleteProduct(_id);
+            bool isDeleated = await product.DeleteProduct(_id);
             if (isDeleated)
             {
                 return TypedResults.Ok();
@@ -29,9 +29,9 @@ namespace exercise.wwwapi.Endpoints
             }
         }
 
-        private static IResult UpdateProduct(int _id, IProductRepository product, ProductPutPayload payload)
+        private static async Task<IResult> UpdateProduct(int _id, IProductRepository product, ProductPutPayload payload)
         {
-            Product updateProduct = product.UpdateProduct(_id, payload);
+            Product updateProduct = await product.UpdateProduct(_id, payload);
             if (updateProduct == null)
             {
                 return TypedResults.NotFound($"product {_id} could not be found");
@@ -62,9 +62,10 @@ namespace exercise.wwwapi.Endpoints
             
         }
 
-        private static IResult getProductById(int _id, IProductRepository product)
+        private static async Task<IResult> getProductById(int _id, IProductRepository product)
         {
-            Product foundProduct = product.getProductById(_id);
+
+            var foundProduct = await product.getProductById(_id);
             if (foundProduct == null)
             {
                 return TypedResults.NotFound($"product: {_id} couls not be found");
@@ -75,9 +76,9 @@ namespace exercise.wwwapi.Endpoints
 
         }
 
-        private static IResult getAllProducts(IProductRepository product)
+        private static async Task<IResult> getAllProducts(IProductRepository product)
         {
-            List<Product> tmp = product.getAllProducts();
+            List<Product> tmp = await product.getAllProducts();
             if (tmp.Count == 0)
             {
                 return TypedResults.NotFound("No Products could be found");

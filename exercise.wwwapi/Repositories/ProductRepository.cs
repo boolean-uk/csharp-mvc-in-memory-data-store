@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace exercise.wwwapi.Repositories
 {
@@ -13,18 +14,18 @@ namespace exercise.wwwapi.Repositories
             _db = db;
         }
 
-        public Product AddProduct(ProductPostPayload payload)
+        public async Task<Product> AddProduct(ProductPostPayload payload)
         {
             try
             {
-                if (!isValidPayload(payload))
+                if (!isValidPostPayload(payload))
                 {
                     return null;
                 }
 
                 var newProduct = new Product() { Id = getNextId(), Name = payload.name, Category = payload.category, Price = payload.price };
-                _db.Add(newProduct);
-                _db.SaveChanges();
+                await Task.Run( () => _db.Add(newProduct));
+                await _db.SaveChangesAsync();
                 return newProduct;
             } catch (Exception ex)
             {
@@ -34,7 +35,7 @@ namespace exercise.wwwapi.Repositories
             
         }
 
-        private bool isValidPayload(ProductPostPayload payload)
+        private bool isValidPostPayload(ProductPostPayload payload)
         {
             try
             {
@@ -66,35 +67,38 @@ namespace exercise.wwwapi.Repositories
             return _id++;
         }
 
-        public bool DeleteProduct(int id)
+        public async Task<bool> DeleteProduct(int id)
         {
-            var deletedProduct = getProductById(id);
+            var deletedProduct = await getProductById(id);
             if (deletedProduct == null)
             {
                 return false;
             }
-            _db._products.Remove(deletedProduct);
-            _db.SaveChanges();
+            await Task.Run( () => _db._products.Remove(deletedProduct));
+            await _db.SaveChangesAsync();
             return true;
         }
 
-        public List<Product> getAllProducts()
+        public async Task<List<Product>> getAllProducts()
         {
-            return _db._products.ToList();
+            var result = await _db._products.ToListAsync();
+            return result;
         }
 
-        public Product? getProductById(int id)
-        {
-            return _db._products.FirstOrDefault(p => p.Id == id);
+        public async Task<Product?> getProductById(int id)
+        {   
+            var result = await _db._products.FirstOrDefaultAsync(p => p.Id == id);
+            return result;
         }
 
-        public Product UpdateProduct(int _id, ProductPutPayload payload)
+        public async Task<Product> UpdateProduct(int _id, ProductPutPayload payload)
         {
-            var updatedProduct = getProductById(_id);
+            var updatedProduct = await getProductById(_id);
             if (updatedProduct == null)
             {
                 return null;
             }
+            
 
             bool isUpdated = false;
 
@@ -120,7 +124,7 @@ namespace exercise.wwwapi.Repositories
                 throw new Exception("No update payload entered"); 
             }
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return updatedProduct;
         }
