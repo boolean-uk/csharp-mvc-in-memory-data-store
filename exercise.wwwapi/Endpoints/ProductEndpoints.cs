@@ -3,13 +3,25 @@ using exercise.wwwapi.Model;
 using exercise.wwwapi.Repository;
 using Microsoft.OpenApi.Writers;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Net;
+using System;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Net.Http;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace exercise.wwwapi.Endpoints
 {
+
+    [ApiController]
     public static class ProductEndpoints
     {
         public static void ConfigureProductEndpoints(this WebApplication app)
         {
+
             var group = app.MapGroup("products");
             group.MapGet("/", GetAllProducts);
             group.MapGet("/{id}", GetProduct);
@@ -17,18 +29,19 @@ namespace exercise.wwwapi.Endpoints
             group.MapPut("/{id}", UpdateProduct);
             group.MapDelete("/{id}", DeleteProduct);
 
-            app.Use(async (ctx, next) =>
+            app.UseExceptionHandler(c => c.Run(async context =>
             {
-                try
+                var exception = context.Features
+                    .Get<IExceptionHandlerFeature>()
+                    ?.Error;
+                if (exception is not null)
                 {
-                    await next(ctx);
-                }
-                catch (BadHttpRequestException)
-                {
-                    throw new BadHttpRequestException("Not found");
+                    var response = new { error = exception.Message };
+                    context.Response.StatusCode = 400;
 
+                    await context.Response.WriteAsJsonAsync("Price must be an integer, something else was provided.");
                 }
-            });
+            }));
 
         }
 
@@ -41,7 +54,7 @@ namespace exercise.wwwapi.Endpoints
 
             if (category != null && !cats.Contains(category))
             {
-                return TypedResults.NotFound("Not found.");
+                return TypedResults.NotFound("No products of the provided category were found.");
             }
 
             return TypedResults.Ok(products.GetAllProducts(category));
@@ -54,27 +67,31 @@ namespace exercise.wwwapi.Endpoints
             Product? prod = products.GetProduct(id);
             if (prod == null)
             {
-                return TypedResults.NotFound($"Not found.");
+                return TypedResults.NotFound($"Product not found.");
             }
             return TypedResults.Ok(prod);
         }
 
+      
+
+
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static IResult CreateProduct( IProductRepository products, ProductPostPayload newData) 
+        public static IResult CreateProduct([FromBody] ProductPostPayload newData,  IProductRepository products) 
+        {
+           
+            if (newData.Name == null || newData.Category == null || newData.Price == null) return TypedResults.BadRequest("All fields are required.");
+            if (newData.Name.Length == 0 || newData.Category.Length == 0 || newData.Price < 0) return TypedResults.BadRequest("No empty fields or negative prices!");
+
+            bool alreadyExists = products.GetAllProducts(null).Exists(x => x.Name == newData.Name);
+            if (alreadyExists)
             {
-                if (newData.Name == null || newData.Category == null || newData.Price == null) return TypedResults.BadRequest("All fields are required.");
-                if (newData.Name.Length == 0 || newData.Category.Length == 0 || newData.Price < 0) return TypedResults.BadRequest("No empty fields or negative prices!");
+               return TypedResults.BadRequest("Product with provided name already exists.");
+            }
 
-                bool alreadyExists = products.GetAllProducts(null).Exists(x => x.Name == newData.Name);
-                if (alreadyExists)
-                {
-                    return TypedResults.BadRequest("Not found.");
-                }
-
-                Product prod = products.AddProduct(newData.Name, newData.Category, newData.Price);
-                return TypedResults.Created($"/tasks{prod.Id}", prod);
-            } 
+            Product prod = products.AddProduct(newData.Name, newData.Category, newData.Price);
+            return TypedResults.Created($"/tasks{prod.Id}", prod);
+        } 
 
 
 
@@ -88,14 +105,14 @@ namespace exercise.wwwapi.Endpoints
                 Product? prod = products.UpdateProduct(id, updateData);
                 if (prod == null)
                 {
-                    return TypedResults.NotFound($"Product with id {id} not found.");
+                    return TypedResults.NotFound($"Product not found.");
                 }
 
                 bool alreadyExists = products.GetAllProducts(null).Where(x => x.Id != id).ToList().Exists(x => x.Name == updateData.name);
 
                 if (alreadyExists)
                 {
-                    return TypedResults.BadRequest("Not found.");
+                    return TypedResults.BadRequest("Product with provided name already exists.");
                 }
 
                 if(updateData.price.GetType() != typeof(int))
@@ -121,12 +138,12 @@ namespace exercise.wwwapi.Endpoints
 
             if (prod == null)
             {
-                return TypedResults.NotFound($"Not found.");
+                return TypedResults.NotFound($"Product not found.");
             }
 
             if (res == false)
             {
-                return Results.NotFound("Not found.");
+                return Results.NotFound("Product not found.");
             }
 
             return Results.Ok(prod);

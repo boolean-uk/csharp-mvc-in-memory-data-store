@@ -1,11 +1,14 @@
 ﻿using exercise.wwwapi.Model;
+using Microsoft.AspNetCore.Mvc;
 
 namespace exercise.wwwapi.Repository
 {
+   
     public interface IProductRepository
     {
         public List<Product> GetAllProducts(string? filter);
 
+       
         public Product AddProduct(string name, string category, int price);
 
         public Product? GetProduct(int id);

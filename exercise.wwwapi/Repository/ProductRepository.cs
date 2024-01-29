@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Model;
+using Microsoft.AspNetCore.Mvc;
 
 namespace exercise.wwwapi.Repository
 {
