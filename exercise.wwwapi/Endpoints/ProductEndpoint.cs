@@ -15,49 +15,49 @@ namespace exercise.wwwapi.Endpoints
             productGroup.MapDelete("/{id}", DeleteProduct);
         }
 
-        public static IResult GetAllProducts(IProductRepository products)
+        public async static Task<IResult> GetAllProducts(IProductRepository products)
         {
-            List<Product> productsList = products.GetAllProducts();
+            List<Product> productsList = await products.GetAllProducts();
             if (productsList.Count() == 0)
                 return TypedResults.NotFound();
 
             return TypedResults.Ok(productsList);
         }
 
-        public static IResult GetProduct(IProductRepository products, int id)
+        public async static Task<IResult> GetProduct(IProductRepository products, int id)
         {
-            Product? product = products.GetProduct(id);
+            Product? product = await products.GetProduct(id);
             if (product == null)
                 return Results.NotFound("ID out of scope");
 
             return TypedResults.Ok(products.GetProduct(id));
         }
 
-        public static IResult CreateProduct(IProductRepository products, ProductPostPayload createdProduct)
+        public async static Task<IResult> CreateProduct(IProductRepository products, ProductPostPayload createdProduct)
         {
-            Product? product = products.AddProduct(createdProduct.name, createdProduct.catagory, createdProduct.price);
+            Product? product = await products.AddProduct(createdProduct.name, createdProduct.catagory, createdProduct.price);
             if (product == null)
                 return Results.BadRequest("Name already found");
 
             return TypedResults.Created($"/products{product.Name} {product.Catagory} {product.Price}", product);
         }
 
-        public static IResult UpdateProduct(IProductRepository products, ProductUpdatePayload posted, int id)
+        public async static Task<IResult> UpdateProduct(IProductRepository products, ProductUpdatePayload posted, int id)
         {
-            Product? product = products.GetProduct(id);
+            Product? product = await products.GetProduct(id);
             if (product == null)
                 return Results.NotFound("ID out of scope");
 
-            product = products.UpdateProduct(product, posted);
+            product = await products.UpdateProduct(product, posted);
             if (product == null)
                 return Results.BadRequest("Name already found");
 
             return TypedResults.Created($"/products{product.Name} {product.Catagory} {product.Price}", product);
         }
 
-        public static IResult DeleteProduct(IProductRepository products, int id)
+        public async static Task<IResult> DeleteProduct(IProductRepository products, int id)
         {
-            Product? product = products.GetProduct(id);
+            Product? product = await products.GetProduct(id);
             if (product == null)
                 return Results.NotFound("ID out of scope");
 

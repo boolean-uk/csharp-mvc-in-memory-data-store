@@ -1,6 +1,7 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
 
 namespace exercise.wwwapi.Repository
@@ -15,39 +16,44 @@ namespace exercise.wwwapi.Repository
             this._db = db;
         }
 
-        public List<Product> GetAllProducts()
+        public async Task<List<Product>> GetAllProducts()
         {
-            return _db.Products.ToList();
+            var tasks = _db.Products.ToListAsync();
+            return await tasks;
         }
 
-        public Product AddProduct(string name, string catagory, int price)
+        public async Task<Product> AddProduct(string name, string catagory, int price)
         {
             List<Product> products = _db.Products.ToList();
-            for (int i = 0; i < products.Count(); i++)
+            int nrProducts = await _db.Products.CountAsync();
+
+            for (int i = 0; i < nrProducts; i++)
             {
                 if (products[i].Name == name)
                     return null;
             }
 
             var newProduct = new Product() { ID = _id++, Name = name, Catagory = catagory, Price = price };
-            _db.Add(newProduct);
-            _db.SaveChanges();
+            await _db.AddAsync(newProduct);
+            await _db.SaveChangesAsync();
             return newProduct;
         }
 
-        public Product? GetProduct(int id)
+        public async Task<Product>? GetProduct(int id)
         {
-            return _db.Products.FirstOrDefault(t => t.ID == id);
+            var task = await _db.Products.FirstOrDefaultAsync(t => t.ID == id);
+            return task;
         }
 
-        public Product? UpdateProduct(Product products, ProductUpdatePayload updateData)
+        public async Task<Product>? UpdateProduct(Product products, ProductUpdatePayload updateData)
         {
             bool hasUpdate = false;
             List<Product> productList = _db.Products.ToList();
+            int nrProducts = await _db.Products.CountAsync();
 
             if (updateData.name != null)
             {
-                for (int i = 0; i < productList.Count(); i++)
+                for (int i = 0; i < nrProducts; i++)
                 {
                     if (productList[i].Name == updateData.name)
                         return null;
@@ -70,16 +76,16 @@ namespace exercise.wwwapi.Repository
             }
 
             if (!hasUpdate) throw new Exception("No update data provided");
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return products;
         }
 
-        public bool DeleteProduct(int id)
+        public async Task<bool> DeleteProduct(int id)
         {
             var product = GetProduct(id);
             if (product == null) return false;
-            _db.Products.Remove(product);
-            _db.SaveChanges();
+            _db.Products.Remove(await product);
+            await _db.SaveChangesAsync();
             return true;
         }
     }
