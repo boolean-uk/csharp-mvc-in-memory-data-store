@@ -1,5 +1,8 @@
 
 
+using exercise.wwwapi.Model;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace wwwapi.Models
 {
     public class Product
@@ -11,14 +14,17 @@ namespace wwwapi.Models
 
         public int id { get; init; }
 
+        [ForeignKey("Discounts")]
+        public int discountID { get; set; }
+        public Discount discount { get; set; }
+
 
         public Product(string name, string category, int price)
         {
             Name = name;
             Category = category;
             Price = price;
-            nProducts++;
-            id = nProducts;
+
 
         }
 
@@ -27,8 +33,7 @@ namespace wwwapi.Models
             Name = payload.Name;
             Category = payload.Category;
             Price = payload.Price;
-            nProducts++;
-            id = nProducts;
+
 
         }
 

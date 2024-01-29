@@ -1,3 +1,4 @@
+using exercise.wwwapi.Model;
 using Microsoft.EntityFrameworkCore;
 using wwwapi.Models;
 
@@ -8,6 +9,7 @@ namespace wwwapi.Data
 
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
         public ProductContext(DbContextOptions<ProductContext> options)
             : base(options)
         {

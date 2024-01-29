@@ -1,4 +1,5 @@
 
+using exercise.wwwapi.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using wwwapi.Data;
@@ -18,7 +19,8 @@ builder.Services.AddDbContext<ProductContext>(opt =>
     opt.UseInMemoryDatabase("ProductList");
 });
 
-builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+builder.Services.AddScoped<IRepository<Product, ProductUpdatePayload>, ProductRepository>();
+builder.Services.AddScoped<IRepository<Discount, DiscountUpdatePayload>, DiscountRepository>();
 
 
 var app = builder.Build();
@@ -34,6 +36,7 @@ app.UseHttpsRedirection();
 
 
 app.ConfigureProductEndPoints();
+app.ConfigureDiscountEndPoints();
 
 app.Run();
 

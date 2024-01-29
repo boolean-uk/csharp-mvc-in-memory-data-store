@@ -1,13 +1,13 @@
 ﻿namespace wwwapi.Repository
 {
-    public interface IRepository<T>
+    public interface IRepository<T1, T2>
     {
-        List<T> GetAll();
-        T Add(T val);
-        bool Delete(int id);
+        Task<List<T1>> GetAll();
+        Task<T1> Add(T1 val);
+        Task<bool> Delete(int id);
 
-        T? Get(int id);
+        Task<T1?> Get(int id);
 
-        T Update(T val);
+        Task<T1> Update(int id, T2 updatePayload);
     }
 }

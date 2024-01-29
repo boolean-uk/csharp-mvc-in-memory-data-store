@@ -1,12 +1,13 @@
 using wwwapi.Data;
 using wwwapi.Repository;
 using wwwapi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace wwwapi.Repository
 {
 
 
-    public class ProductRepository : IRepository<Product, ProductPayload>
+    public class ProductRepository : IRepository<Product, ProductUpdatePayload>
     {
         private ProductContext _db;
 
@@ -15,30 +16,30 @@ namespace wwwapi.Repository
             _db = db;
         }
 
-        public List<Product> GetAll()
+        public async Task<List<Product>>   GetAll()
         {
-            return _db.Products.ToList();
+            return await _db.Products.ToListAsync();
         }
 
-        public Product Add(Product product)
+        public async Task<Product> Add(Product product)
         {
-            _db.Products.Add(product);
-            _db.SaveChanges();
+            await _db.Products.AddAsync(product);
+            await _db.SaveChangesAsync();
             return product;
 
         }
 
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            Product? p = Get(id);
-            if (p != null) { return false; }
+            Product? p = await Get(id);
+            if (p == null) { return false; }
             _db.Products.Remove(p);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return true;
 
         }
 
-        public Product? Get(int id) {
+        public async Task<Product?> Get(int id) {
             Product? product = _db.Products.FirstOrDefault(p => p.id == id);
 
             if (product == null) { return null; }
@@ -49,15 +50,15 @@ namespace wwwapi.Repository
         }
 
 
-        public Product Update(int id, ProductPayload payload)
+        public async Task<Product> Update(int id, ProductUpdatePayload payload)
         {
-            Product product = Get(id);
+            Product? product = await Get(id);
 
             if (payload.Name != null) { product.Name = payload.Name; } 
             if (payload.Category != null) { product.Category = payload.Category; } 
             if (payload.Name != null) { product.Name = payload.Name; }
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return product;
         }
     }

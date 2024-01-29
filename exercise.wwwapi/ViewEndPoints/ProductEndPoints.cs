@@ -7,9 +7,9 @@ using wwwapi.Repository;
 
 namespace wwwapi.EndPoints
 {
-    public static class ProductEndPoints
+    public static  class ProductEndPoints
     {
-        public static void ConfigureProductEndPoints(this WebApplication app)
+        public static async void ConfigureProductEndPoints(this WebApplication app)
         {
             var productGroup = app.MapGroup("products");
             productGroup.MapPost("/", AddProduct);
@@ -19,33 +19,38 @@ namespace wwwapi.EndPoints
             productGroup.MapDelete("/{id}", DeleteProductById);
         }
 
-        public static IResult AddProduct(ProductPayload product, IRepository<Product> productRepository)
+        public static async Task<IResult> AddProduct(ProductPayload product, IRepository<Product, ProductUpdatePayload> productRepository)
         {
             Product newProd = new Product(product);
-            productRepository.Add(newProd);
+            await productRepository.Add(newProd);
             return TypedResults.Ok(newProd);
         }
 
-        public static IResult GetAllProducts(IRepository<Product> productRepository)
+        public static async Task<IResult> GetAllProducts(IRepository<Product, ProductUpdatePayload> productRepository)
         {
             return TypedResults.Ok(productRepository.GetAll());
         }
 
-        public static IResult GetProductById(int id, IRepository<Product> productRepository)
+        public static async Task<IResult> GetProductById(int id, IRepository<Product, ProductUpdatePayload> productRepository)
         {
-            Product? product = productRepository.Get(id);
+            Product? product = await productRepository.Get(id);
             if(product == null) { return TypedResults.NotFound(); }
             return TypedResults.Ok(product);
         }
 
-        public static IResult UpdateProduct(string name, Product updatedProduct, IRepository<Product> productRepository)
+        public static async Task<IResult> UpdateProduct(int id, IRepository<Product, ProductUpdatePayload> productRepository, ProductUpdatePayload productUpdatePayload)
         {
-            throw new NotImplementedException();
+            Product product = await productRepository.Update(id, productUpdatePayload);
+            return TypedResults.Ok(product);
+
         }
 
-        public static IResult DeleteProductById(string name, IRepository<Product> productRepository)
+        public static async Task<IResult> DeleteProductById(int id,  IRepository<Product, ProductUpdatePayload> productRepository)
         {
-            throw new NotImplementedException();
+            Product product = await productRepository.Get(id);
+            bool res = await productRepository.Delete(id);
+            if(res) {return  TypedResults.Ok(product); }
+            return TypedResults.NotFound();
         }
 
     }
