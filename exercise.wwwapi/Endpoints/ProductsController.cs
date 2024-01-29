@@ -11,9 +11,11 @@ namespace exercise.wwwapi.Endpoints
         private readonly IProductRepository _repository;
         private readonly IDiscountRepository _discountRepository;
 
-        public ProductsController(IProductRepository repository)
+        public ProductsController(IProductRepository repository , IDiscountRepository discountRepository)
         {
             _repository = repository;
+            _discountRepository = discountRepository;
+
         }
 
         [HttpGet]
@@ -100,6 +102,5 @@ namespace exercise.wwwapi.Endpoints
             await _repository.UpdateProduct(id , product);
             return NoContent();
         }
-
     }
 }
