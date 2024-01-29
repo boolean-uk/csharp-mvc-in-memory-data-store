@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace exercise.wwwapi.Repository
 {
@@ -10,9 +11,10 @@ namespace exercise.wwwapi.Repository
         {
             _db = db;
         }
-        public List<Product> GetAll()
+        public async Task<List<Product>> GetAll()
         {
-            return _db.Products.ToList();
+            var product = await _db.Products.ToListAsync();
+            return product;
         }
         public Product? GetProduct(int id)
         {
@@ -24,6 +26,13 @@ namespace exercise.wwwapi.Repository
             _db.Add(product);
             _db.SaveChanges();
             return product;
+        }
+        public Discount AddDiscount(int discountAmount ,int productId)
+        {
+            var discount = new Discount() { PriceOff = discountAmount, ProductId = productId};
+            _db.Add(discount);
+            _db.SaveChanges();
+            return discount;
         }
         public Product? UpdateProduct(int id, ProductUpdatePayload updateData)
         {

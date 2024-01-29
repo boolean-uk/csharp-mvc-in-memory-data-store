@@ -16,9 +16,10 @@ namespace exercise.wwwapi.Endpoints
             productGroup.MapPut("/UpdateProduct/{id}", UpdateProduct);
             productGroup.MapDelete("/DeleteProduct/{id}", DeleteProduct);
         }
-        public static IResult GetAll(IProductRepository products)
+        public static async Task<IResult> GetAll(IProductRepository products)
         {
-            return TypedResults.Ok(products.GetAll());
+            var product = await products.GetAll();
+            return TypedResults.Ok(product);
         }
         public static IResult GetProduct(IProductRepository products, int id)
         {
@@ -31,7 +32,8 @@ namespace exercise.wwwapi.Endpoints
         }
         public static IResult CreateProduct(IProductRepository products, ProductPostPayload newProductData)
         {
-
+            int discountAmount = 0;
+            discountAmount = newProductData.discount;
             if (newProductData.name == null)
             {
                 return TypedResults.BadRequest("name is required.");
@@ -44,7 +46,9 @@ namespace exercise.wwwapi.Endpoints
             {
                 return TypedResults.BadRequest("price must be positive");
             }
-            Product product = products.AddProduct(newProductData.name, newProductData.category, newProductData.price);
+            int newPrice = newProductData.price - discountAmount;
+            Product product = products.AddProduct(newProductData.name, newProductData.category, newProductData.price);//Clip board: newPrice
+            Discount discount = products.AddDiscount(discountAmount, product.Id);
             return TypedResults.Created($"/products{product.Id}", product);
         }
         public static IResult UpdateProduct(IProductRepository products, int id, ProductUpdatePayload updateData)
