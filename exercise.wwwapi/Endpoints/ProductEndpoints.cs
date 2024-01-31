@@ -11,11 +11,11 @@ namespace exercise.wwwapi.Endpoints
         {
             var productGroup = app.MapGroup("Products");
 
-            productGroup.MapGet("/products", GetProducts);
-            productGroup.MapPost("/products", AddProduct);
-            productGroup.MapGet("/products/{id}", GetAProduct);
-            productGroup.MapDelete("/products/{id}", DeleteProduct);
-            productGroup.MapPut("/products/{id}", UpdateProduct);
+            productGroup.MapGet("", GetProducts);
+            productGroup.MapPost("", AddProduct);
+            productGroup.MapGet("/{id}", GetAProduct);
+            productGroup.MapDelete("/{id}", DeleteProduct);
+            productGroup.MapPut("/{id}", UpdateProduct);
 
         }
 
