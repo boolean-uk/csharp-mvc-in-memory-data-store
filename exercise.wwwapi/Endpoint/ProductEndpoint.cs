@@ -24,6 +24,10 @@ namespace exercise.wwwapi.Endpoint
                 {
                     return Results.BadRequest("Please replace string with a name and category");
                 }
+                if(product.price <= 0)
+                {
+                    return Results.BadRequest("Please write a price higher than 0");
+                }
                 return await next(invocationContext);
             });
             productGroup.MapGet("/", GetProducts);
