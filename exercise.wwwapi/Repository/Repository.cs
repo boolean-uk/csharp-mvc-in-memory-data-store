@@ -1,4 +1,4 @@
-﻿using exercise.wwwapi.Products;
+﻿using exercise.wwwapi.Models;
 using exercise.wwwapi.Data;
 
 
@@ -7,40 +7,63 @@ namespace exercise.wwwapi.Repository
     public class Repository : IRepository
     {
 
-        private IProduct _productDatabase;
-        public Repository(IProduct productDatabase)
+        private DatabaseContext _db;
+        public Repository(DatabaseContext db)
         {
-            _productDatabase = productDatabase;
+            _db = db;
         }
 
-
-        public Product Add(Product product)
+        // add a product
+        public Product CreateProduct(Product product)
         {
-            return _productDatabase.Add(product);
+            _db.Add(product);
+            _db.SaveChanges();
+            return product;
         }
 
-        public bool Delete(int id)
+        // get all products
+        public IEnumerable<Product> GetProducts()
         {
-            return _productDatabase.Delete(id);
+            return _db.Product.ToList();
         }
 
-        public IEnumerable<Products.Product> GetProducts()
+        // get a product
+
+        public Product GetProduct(int id)
         {
-            return _productDatabase.GetProducts();
+            return _db.Product.FirstOrDefault(product => product.Id == id);
         }
 
-        public Product Update(int id, ProductPut productPut)
+        // update a product
+        public Product UpdateProduct(int id, ProductPut productPut)
         {
 
-            var found = _productDatabase.Get(id, out Product product);
-            if (!found)
+            var found = _db.Product.FirstOrDefault(p => p.Id == id);
+            if (found == null)
             {
                 return null;
             }
 
-            product.Category = productPut.Category;
-            product.Price = productPut.Price;
-            return product;
+            found.Name = productPut.Name;
+            found.Category = productPut.Category;
+            found.Price = productPut.Price;
+            _db.SaveChanges();
+            return found;
+        }
+
+        // delete a product
+        public Product DeleteProduct(int id)
+        {
+            var found = _db.Product.FirstOrDefault(p => p.Id == id);
+            if (found == null)
+            {
+                return null;
+
+            }
+
+            _db.Product.Remove(found);
+            _db.SaveChanges();
+            return found;
         }
     }
     

@@ -1,14 +1,15 @@
-﻿using exercise.wwwapi.Products;
+﻿using exercise.wwwapi.Models;
 
 namespace exercise.wwwapi.Repository
 {
     public interface IRepository
     {
         IEnumerable<Product> GetProducts(); 
-        Product Add(Product product);
-        Product Update(int id, ProductPut productPut);
+        Product GetProduct(int id);
+        Product CreateProduct(Product product);
+        Product UpdateProduct(int id, ProductPut productPut);
 
-        bool Delete(int id);
+        Product DeleteProduct(int id);
 
         
     }

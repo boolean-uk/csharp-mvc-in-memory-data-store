@@ -1,53 +1,118 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using exercise.wwwapi.Repository;
-using exercise.wwwapi.Products;
+using exercise.wwwapi.Models;
+
 namespace exercise.wwwapi.Endpoints
 {
     public static class ProductEndpoint
     {
         public static void ConfigureProductEndpoint(this WebApplication app)
         {
-            var productGroup = app.MapGroup("products");
+            var productGroup = app.MapGroup("product");
 
-            productGroup.MapPost("/create a product", AddProduct);
-            productGroup.MapGet("/get all products", GetProducts);
-            productGroup.MapGet("/{id}", AddProduct);
-            productGroup.MapPut("/update a product {name}", UpdateProduct);
-            productGroup.MapDelete("/delete product{id}", DeleteProduct);
+            productGroup.MapPost("/", CreateProduct);
+            productGroup.MapGet("/", GetProducts);
+            productGroup.MapGet("/{id}", GetProductById);
+            productGroup.MapPut("/{id}", UpdateProduct);
+            productGroup.MapDelete("/{id}", DeleteProduct);
+        }
+
+
+        // get all products
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> GetProducts(IRepository repository)
+        {
+            var products = repository.GetProducts();
+            if (products == null|| products.Count() == null)
+            {
+                return TypedResults.NotFound("No products of provided category found");
+
+            }
+
+            return TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> GetProducts([FromServices] IRepository repository)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> GetProductById(IRepository repository, int id)
         {
-            return TypedResults.Ok(repository.GetProducts());
+            var found = repository.GetProduct(id);
+            if (found == null)
+            {
+                return TypedResults.NotFound("Product not found");
+            }
+
+            return TypedResults.Ok(found);
         }
 
-
+        // create a new product
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public static async Task<IResult> AddProduct([FromServices] IRepository repository, [FromBody] ProductPost product)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> CreateProduct(IRepository repository, ProductPost product)
         {
-            //validate
-            if (product == null)
+            if (!int.TryParse(product.Price, out var price))
             {
-
+                return TypedResults.BadRequest(" Price most be an integer, something else was provided");
             }
-            var newProduct = new Product() { Category = product.Category, Price = product.Price };
-            repository.Add(newProduct);
+  
+            var newProduct = new Product() 
+            { 
+                Name = product.Name,
+                Category = product.Category, 
+                Price = price
+            };
+
+            if (newProduct == null) 
+            {
+                return TypedResults.BadRequest("Product with provided name allready exists");
+            }
+
+            repository.CreateProduct(newProduct);
             return TypedResults.Created($"/{newProduct.Name}", newProduct);
         }
 
-          
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> UpdateProduct([FromServices] IRepository repository, int id, [FromBody] ProductPut name)
-        {
-            return TypedResults.Ok(repository.Update(id, name));
-        }
+        
+        // update a product
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> UpdateProduct(IRepository repository, int id, ProductPut product)
+        {
+            if (!(product.Price is int))
+            {
+                return TypedResults.BadRequest("Price most be integer, something else was provided");
+            }
+
+            var newProduct = repository.UpdateProduct(id, product);
+
+
+            if (newProduct == null)
+            {
+                return TypedResults.NotFound("Product not found");
+            }
+
+            return TypedResults.Created($"{product.Name}", newProduct);
+        }
+
+
+
+        // delete a product
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
         public static async Task<IResult> DeleteProduct(int id, IRepository repository)
         {
-            var studentDeleted = repository.Delete(id);
-            return TypedResults.Ok(studentDeleted);
+            var product = repository.DeleteProduct(id);
+            if(product == null)
+            {
+                return TypedResults.NotFound(); 
+            }
+
+            return TypedResults.Ok(product);
     
         }
 
