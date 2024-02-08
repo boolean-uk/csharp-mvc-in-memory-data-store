@@ -1,7 +1,6 @@
 ﻿using exercise.wwwapi.Models;
 namespace exercise.wwwapi.Data
 
-
 {
     public class ProductCollection
     {
@@ -20,5 +19,4 @@ namespace exercise.wwwapi.Data
             return products.FirstOrDefault(p => p.Id == id);
         }
     }
-
 }

@@ -17,34 +17,73 @@ namespace exercise.wwwapi.Endpoints
 
             productGroup.MapGet("/getByID", GetProductByID);
 
+            productGroup.MapGet("/getByCategory", GetProductsByCategory);
+
             productGroup.MapPut("/update", UpdateProduct);
 
             productGroup.MapDelete("/delete", DeleteProduct);
         }
 
-        public static IResult CreateNewProduct(IproductRepository products, string name, string category, int price) 
+        //create new product
+        public static async Task<IResult> CreateNewProduct(IproductRepository products, ProductPayload updateData) 
         {
-            return TypedResults.Created("/created", products.CreateProduct(name, category, price));
+            var product = await products.CreateProduct(updateData);
+            if (product == null)
+            {
+                return TypedResults.BadRequest( "Product with the same name already exists");
+            }
+            return TypedResults.Created("/created", product);
         }
 
-        public static IResult GetAllProducts(IproductRepository products)
+        //get all products
+        public static async Task<IResult> GetAllProducts(IproductRepository products)
         {
-            return TypedResults.Ok(products.GetAllProducts());
+            return TypedResults.Ok(await products.GetAllProducts());
         }
 
-        public static IResult GetProductByID(IproductRepository products, int id)
+        //get products by category
+        public static async Task<IResult> GetProductsByCategory(IproductRepository products, string category)
         {
-            return TypedResults.Ok(products.GetProductById(id));
+            var results = await products.GetProductsByCategory(category);
+            if (results == null)
+            {
+                return TypedResults.NotFound("no products with this category exists");
+            }
+            return TypedResults.Ok(results);
         }
 
-        public static IResult UpdateProduct(IproductRepository products, int id, string newName, string newCategory, int newPrice)
+        //get product by ID
+        public static async Task<IResult> GetProductByID(IproductRepository products, int id)
         {
-            return TypedResults.Created("/updated", products.UpdateProduct(id, newName, newCategory, newPrice));
+            var result = await products.GetProductById(id);
+            if (result == null)
+            {
+                return TypedResults.NotFound("no products with this ID");
+            }
+            return TypedResults.Ok(await products.GetProductById(id));
         }
 
-        public static IResult DeleteProduct(IproductRepository products, int id)
+        //update product
+        public static async Task<IResult> UpdateProduct(IproductRepository products, int id, ProductPayload updateData)
         {
-            return TypedResults.Ok(products.DeleteProduct(id));
+            var results = await products.UpdateProduct(id, updateData);
+            if (results == null)
+            {
+                return TypedResults.BadRequest("product with provided name already exists," +
+                    "or no product with provided ID");
+            }
+            return TypedResults.Created("/updated", results);
+        }
+
+        //delete product
+        public static async Task<IResult> DeleteProduct(IproductRepository products, int id)
+        {
+            var results = await products.DeleteProduct(id);
+            if (results == null)
+            {
+                return TypedResults.NotFound(TypedResults.NotFound());
+            }
+            return TypedResults.Ok(results);
         }
     }
 }
