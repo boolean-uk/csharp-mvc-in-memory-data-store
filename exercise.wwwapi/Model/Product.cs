@@ -6,6 +6,6 @@
         public string? Name { get; set; }
         public string? Category { get; set; }
         public double Price { get; set; }
-        public List<Discount>? Discounts { get; set; }
+        public Discount? Discount { get; set; }
     }
 }

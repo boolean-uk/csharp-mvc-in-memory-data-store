@@ -8,6 +8,8 @@ namespace exercise.wwwapi.Model
 
         public string? Code { get; set; }
 
+        public double? Percentage { get; set; }
+
         [ForeignKey("Product")]
         public int ProductId { get; set; }
     }
