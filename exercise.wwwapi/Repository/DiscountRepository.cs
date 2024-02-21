@@ -6,26 +6,26 @@ namespace exercise.wwwapi.Repository
 {
     public class DiscountRepository: IDiscountRepository
     {
-        private DiscountContext _db;
+        private DataContext _db;
 
-        public DiscountRepository(DiscountContext db)
+        public DiscountRepository(DataContext db)
         {
             _db = db;
         }
 
-        public async Task<List<Discount>> GetAll()
+        public async Task<List<Discount>> GetAllAsync()
         {
             var discounts = await _db.Discounts.ToListAsync();
             return discounts;
         }
 
-        public async Task<Discount?> GetById(int id)
+        public async Task<Discount?> GetByIdAsync(int id)
         {
             var discount = await _db.Discounts.FirstOrDefaultAsync(d => d.Id == id);
             return discount;
         }
 
-        public async Task<Discount> Add(DiscountCreatePayload payload)
+        public async Task<Discount> AddAsync(DiscountCreatePayload payload)
         {
             var discount = new Discount() { Code = payload.Code, Percentage = payload.Percentage };
             await _db.AddAsync(discount);
@@ -33,9 +33,9 @@ namespace exercise.wwwapi.Repository
             return discount;
         }
 
-        public async Task<Discount?> Update(int id, DiscountUpdatePayload discountData)
+        public async Task<Discount?> UpdateAsync(int id, DiscountUpdatePayload discountData)
         {
-            var discount = await GetById(id);
+            var discount = await GetByIdAsync(id);
             if (discount == null)
             {
                 return null;
@@ -51,18 +51,13 @@ namespace exercise.wwwapi.Repository
                 discount.Percentage = (double)discountData.Percentage;
             }
 
-            if (discountData.ProductId != null)
-            {
-                discount.ProductId = (int)discountData.ProductId;
-            }
-
             await _db.SaveChangesAsync();
             return discount;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var discount = await GetById(id);
+            var discount = await GetByIdAsync(id);
             if (discount == null)
             {
                 return false;

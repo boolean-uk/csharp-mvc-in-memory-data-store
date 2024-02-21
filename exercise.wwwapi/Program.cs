@@ -9,22 +9,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<ProductContext>(opt =>
-{
-    opt.UseInMemoryDatabase("Products");
-});
-
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
-builder.Services.AddDbContext<DiscountContext>(opt =>
-{
-    opt.UseInMemoryDatabase("Discounts");
-});
-
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+builder.Services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("Products"));
 
 var app = builder.Build();
+
+//ensure db context is created with seeded data
+using (var dbContext = new DataContext(new DbContextOptions<DataContext>()))
+{
+    dbContext.Database.EnsureCreated();
+}
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -36,6 +33,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.ConfigureProductEndpoints();
+app.ConfigureDiscountEndpoints();
 
 app.Run();
 

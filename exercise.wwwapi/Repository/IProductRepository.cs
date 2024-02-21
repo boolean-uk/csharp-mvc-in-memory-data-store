@@ -4,11 +4,11 @@ namespace exercise.wwwapi.Repository
 {
     public interface IProductRepository
     {
-        public Task<List<Product>> GetAll();
-        public Task<Product?> GetById(int id);
-        public Task<Product> Add(ProductCreatePayload payload);
-        public Task<Product?> Update(int id, ProductUpdatePayload productData);
-        public Task<bool> Delete(int id);
+        public Task<List<Product>> GetAllAsync();
+        public Task<Product?> GetByIdAsync(int id);
+        public Task<Product> AddAsync(ProductCreatePayload payload);
+        public Task<Product?> UpdateAsync(int id, ProductUpdatePayload productData);
+        public Task<bool> DeleteAsync(int id);
 
     }
 }

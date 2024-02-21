@@ -10,7 +10,8 @@ namespace exercise.wwwapi.Model
 
         public double? Percentage { get; set; }
 
-        [ForeignKey("Product")]
-        public int ProductId { get; set; }
+        public ICollection<Product> Products { get; set; } = new List<Product>();
+
+
     }
 }

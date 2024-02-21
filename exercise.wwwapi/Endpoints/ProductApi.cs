@@ -4,7 +4,7 @@ using exercise.wwwapi.Model;
 
 namespace exercise.wwwapi.Endpoints
 {
-    public static class ProductEndpoints
+    public static class ProductApi
     {
         public static void ConfigureProductEndpoints(this WebApplication app)
         {
@@ -19,7 +19,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status200OK)]
         public static async Task<IResult> GetAllProducts(IProductRepository products)
         {
-            var results = await products.GetAll();
+            var results = await products.GetAllAsync();
             return TypedResults.Ok(results);
         }
 
@@ -27,7 +27,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> GetProductById(IProductRepository products, int id)
         {
-            var result = await products.GetById(id);
+            var result = await products.GetByIdAsync(id);
             if (result == null)
             {
                 return TypedResults.NotFound($"Product with id {id} not found");
@@ -39,7 +39,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> CreateProduct(IProductRepository products, ProductCreatePayload payload)
         {
-            var product = await products.Add(payload);
+            var product = await products.AddAsync(payload);
             return TypedResults.Created($"/products/{product.Id}", product);
         }
 
@@ -48,7 +48,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> UpdateProduct(IProductRepository products, int id, ProductUpdatePayload payload)
         {
-            Product? product = await products.Update(id, payload);
+            Product? product = await products.UpdateAsync(id, payload);
             if (product == null)
             {
                 return TypedResults.NotFound($"Product with id {id} not found");
@@ -60,7 +60,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> DeleteProduct(IProductRepository products, int id)
         {
-            bool deleted = await products.Delete(id);
+            bool deleted = await products.DeleteAsync(id);
             if (!deleted)
             {
                 return TypedResults.NotFound($"Product with id {id} not found");

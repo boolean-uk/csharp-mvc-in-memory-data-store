@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace exercise.wwwapi.Endpoints
 {
-    public static class DiscountEndpoints
+    public static class DiscountApi
     {
         public static void ConfigureDiscountEndpoints(this WebApplication app)
         {
@@ -19,7 +19,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status200OK)]
         public static async Task<IResult> GetAllDiscounts(IDiscountRepository discounts)
         {
-            var results = await discounts.GetAll();
+            var results = await discounts.GetAllAsync();
             return TypedResults.Ok(results);
         }
 
@@ -27,7 +27,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> GetDiscountById(IDiscountRepository discounts, int id)
         {
-            var result = await discounts.GetById(id);
+            var result = await discounts.GetByIdAsync(id);
             if (result == null)
             {
                 return TypedResults.NotFound($"Discount with id {id} not found");
@@ -39,7 +39,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> CreateDiscount(IDiscountRepository discounts, DiscountCreatePayload payload)
         {
-            var discount = await discounts.Add(payload);
+            var discount = await discounts.AddAsync(payload);
             return TypedResults.Created($"/discounts/{discount.Id}", discount);
         }
 
@@ -48,7 +48,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> UpdateDiscount(IDiscountRepository discounts, int id, DiscountUpdatePayload payload)
         {
-            Discount? discount = await discounts.Update(id, payload);
+            Discount? discount = await discounts.UpdateAsync(id, payload);
             if (discount == null)
             {
                 return TypedResults.NotFound($"Discount with id {id} not found");
@@ -60,7 +60,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> DeleteDiscount(IDiscountRepository discounts, int id)
         {
-            bool deleted = await discounts.Delete(id);
+            bool deleted = await discounts.DeleteAsync(id);
             if (!deleted)
             {
                 return TypedResults.NotFound($"Discount with id {id} not found");

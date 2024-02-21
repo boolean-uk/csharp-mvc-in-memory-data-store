@@ -6,24 +6,24 @@ namespace exercise.wwwapi.Repository
 {
     public class ProductRepository: IProductRepository
     {
-        private ProductContext _db;
-        public ProductRepository(ProductContext db)
+        private DataContext _db;
+        public ProductRepository(DataContext db)
         {
             _db = db;
         }
-        public async Task<List<Product>> GetAll()
+        public async Task<List<Product>> GetAllAsync()
         {
             var products = await _db.Products.ToListAsync();
             return products;
         }
 
-        public async Task<Product?> GetById(int id)
+        public async Task<Product?> GetByIdAsync(int id)
         {
             var product = await _db.Products.FirstOrDefaultAsync(p => p.Id == id);
             return product;
         }
 
-        public async Task<Product> Add(ProductCreatePayload payload)
+        public async Task<Product> AddAsync(ProductCreatePayload payload)
         {
             var product = new Product() { Name = payload.Name, Category = payload.Category, Price = payload.Price};
             await _db.AddAsync(product);
@@ -31,9 +31,9 @@ namespace exercise.wwwapi.Repository
             return product;
         }
 
-        public async Task<Product?> Update(int id, ProductUpdatePayload productData)
+        public async Task<Product?> UpdateAsync(int id, ProductUpdatePayload productData)
         {
-            var product = await GetById(id);
+            var product = await GetByIdAsync(id);
             if (product == null)
             {
                 return null;
@@ -58,9 +58,9 @@ namespace exercise.wwwapi.Repository
             return product;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var product = await GetById(id);
+            var product = await GetByIdAsync(id);
             if (product == null) return false;
             _db.Remove(product);
             await _db.SaveChangesAsync();
