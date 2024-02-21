@@ -1,5 +1,6 @@
 ﻿using exercise.wwwapi.Data;
 using exercise.wwwapi.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace exercise.wwwapi.Repository
 {
@@ -10,26 +11,29 @@ namespace exercise.wwwapi.Repository
         {
             _db = db;
         }
-        public List<Product> GetAll()
+        public async Task<List<Product>> GetAll()
         {
-            return _db.Products.ToList();
+            var products = await _db.Products.ToListAsync();
+            return products;
         }
 
-        public Product? GetById(int id)
+        public async Task<Product?> GetById(int id)
         {
-            return _db.Products.FirstOrDefault(p => p.Id == id);
-        }
-
-        public Product Add(Product product)
-        {
-            _db.Products.Add(product);
-            _db.SaveChanges();
+            var product = await _db.Products.FirstOrDefaultAsync(p => p.Id == id);
             return product;
         }
 
-        public Product? Update(int id, ProductUpdatePayload productData)
+        public async Task<Product> Add(ProductCreatePayload payload)
         {
-            var product = GetById(id);
+            var product = new Product() { Name = payload.Name, Category = payload.Category, Price = payload.Price};
+            await _db.AddAsync(product);
+            await _db.SaveChangesAsync();
+            return product;
+        }
+
+        public async Task<Product?> Update(int id, ProductUpdatePayload productData)
+        {
+            var product = await GetById(id);
             if (product == null)
             {
                 return null;
@@ -50,16 +54,16 @@ namespace exercise.wwwapi.Repository
                 product.Price = (double)productData.Price;
             }
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return product;
         }
 
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            var product = GetById(id);
+            var product = await GetById(id);
             if (product == null) return false;
-            _db.Products.Remove(product);
-            _db.SaveChanges();
+            _db.Remove(product);
+            await _db.SaveChangesAsync();
             return true;
         }
     }
