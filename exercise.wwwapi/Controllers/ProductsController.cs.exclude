@@ -1,0 +1,98 @@
+﻿using exercise.wwwapi.Controllers.Models;
+using exercise.wwwapi.Controllers.Repository;
+using Microsoft.AspNetCore.Mvc;
+
+namespace exercise.wwwapi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProductsController : ControllerBase
+    {
+        IProductRepository productsRepository;
+        public ProductsController(IProductRepository productsRepository)
+        {
+            this.productsRepository = productsRepository;
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<IResult> Put(Product product)
+        {
+            try
+            {
+                if (productsRepository.Add(product)) return Results.Ok();
+                return Results.NotFound();
+
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
+        [HttpGet] //get all
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IResult> Get()
+        {
+            try
+            {
+                return Results.Ok(productsRepository.findAll());
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
+        [HttpGet] //get by id
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Route("{id}")]
+        public async Task<IResult> GetAProduct(int id)
+        {
+            try
+            {
+                return Results.Ok(productsRepository.find(id));
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+
+        [HttpPut] //update product
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Route("{id}")]
+        public async Task<IResult> Update(int id, Product product)
+        {
+            //get item to update
+            var item = productsRepository.find(id);
+
+            if (item == null) return Results.NotFound();
+
+            item.name = string.IsNullOrEmpty(product.name) ? item.name : product.name;
+            item.category = string.IsNullOrEmpty(product.category) ? item.category : product.category;
+            item.price = product.price;
+
+            return Results.Ok(item);
+        }
+
+        
+        [HttpDelete] //delete product
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Route("{id}")]
+        public async Task<IResult> DeleteAProduct(int id)
+        {
+            try
+            {
+                productsRepository.Delete(id);
+                return Results.Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        }
+    }
+}
