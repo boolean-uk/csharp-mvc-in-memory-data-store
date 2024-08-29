@@ -3,6 +3,7 @@ using exercise.wwwapi.Repository;
 using exercise.wwwapi.Services;
 using exercise.wwwapi.Models;
 using Microsoft.EntityFrameworkCore;
+using exercise.wwwapi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +13,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+builder.Services.AddControllers();
 //Register an in memory DbContext
 builder.Services.AddDbContext<ProductDbContext>(options => options.UseInMemoryDatabase("ProductDB"));
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddSingleton<IdGenerator, IdGenerator>();
 builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
 
 var app = builder.Build();
@@ -27,6 +30,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();
 

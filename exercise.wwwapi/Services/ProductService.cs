@@ -15,7 +15,7 @@ namespace exercise.wwwapi.Services
             _idGenerator = idGenerator;
         }
 
-        public Product CreateProduct(ProductDTO productDTO)
+        public Product Create(ProductDTO productDTO)
         {
             var product = new Product
             {
