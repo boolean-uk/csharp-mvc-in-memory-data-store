@@ -1,4 +1,7 @@
 using exercise.wwwapi.Data;
+using exercise.wwwapi.Repository;
+using exercise.wwwapi.Services;
+using exercise.wwwapi.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 //Register an in memory DbContext
 builder.Services.AddDbContext<ProductDbContext>(options => options.UseInMemoryDatabase("ProductDB"));
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
 
 var app = builder.Build();
 
