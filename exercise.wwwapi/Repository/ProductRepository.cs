@@ -46,5 +46,10 @@ namespace exercise.wwwapi.Repository
             _db.SaveChanges();
             return foundproduct;
         }
+
+        public List<Product> GetAll()
+        {
+            return _db.products.ToList();
+        }
     }
 }

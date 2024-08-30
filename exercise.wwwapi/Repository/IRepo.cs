@@ -9,6 +9,7 @@ namespace exercise.wwwapi.Repository
         Product CreateProduct(Product product);
         Product UpdateProduct(Product product, int id);
 
+        List<Product> GetAll();
         void DeleteProduct(int id);
 
     }

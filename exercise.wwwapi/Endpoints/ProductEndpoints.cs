@@ -26,7 +26,7 @@ namespace exercise.wwwapi.Endpoints
             var products = productrepo.GetProducts(category);
             if (products.Count == 0)
             {
-                var error = new ErrorMessage("No products of the provided category were found");
+                var error = new ErrorMessage("No products of the provided category were found.");
                 return TypedResults.NotFound(error);
             }
             return TypedResults.Ok(products);
@@ -39,7 +39,12 @@ namespace exercise.wwwapi.Endpoints
         {
             if (prod == null)
             {
-                var error = new ErrorMessage("Price must be an integer, something else was provided. / Product with provided name already exists");
+                var error = new ErrorMessage("Price must be an integer, something else was provided");
+                return TypedResults.BadRequest(error);
+            }
+            else if (prodrepo.GetAll().Any(x => x.Name == prod.Name))
+            {
+                var error = new ErrorMessage("Product with provided name already exists");
                 return TypedResults.BadRequest(error);
             }
             prodrepo.CreateProduct(new Product() { Category = prod.Category, Name = prod.Name, Price = prod.Price });
@@ -74,7 +79,12 @@ namespace exercise.wwwapi.Endpoints
             }
             if (prod == null)
             {
-                var error = new ErrorMessage("Price must be an integer, something else was provided. / Product with provided name already exists");
+                var error = new ErrorMessage("Price must be an integer, something else was provided.");
+                return TypedResults.BadRequest(error);
+            }
+            else if (prodrepo.GetAll().Any(x => x.Name == prod.Name))
+            {
+                var error = new ErrorMessage("Product with provided name already exists.");
                 return TypedResults.BadRequest(error);
             }
 
