@@ -36,7 +36,7 @@ namespace exercise.wwwapi.Repository
             return entity;
         }
 
-        public Product Get(int id)
+        public Product Get(int? id)
         {
             return _dbSet.FirstOrDefault(product => product.ID == id);
         }

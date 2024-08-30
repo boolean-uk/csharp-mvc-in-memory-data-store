@@ -4,7 +4,7 @@
     {
         T Create(T entity);
         List<T> GetAll();
-        T Get(int id);
+        T Get(int? id);
         T Update(int id, T entity);
         T Delete(int id);
     }
