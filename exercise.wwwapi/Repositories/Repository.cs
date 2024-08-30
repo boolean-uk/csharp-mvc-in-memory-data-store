@@ -10,7 +10,10 @@ namespace exercise.wwwapi.Repositories
         {
             _db = db;
         }
-
+        public List<Product> GetAllProducts()
+        {
+            return _db.Products.ToList();
+        }
         public Product AddProduct(Product product)
         {
             _db.Add(product);
