@@ -1,4 +1,6 @@
 ﻿using exercise.wwwapi.Controller.Repository;
+using exercise.wwwapi.Model.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace exercise.wwwapi.Controller.Endpoints
@@ -16,33 +18,44 @@ namespace exercise.wwwapi.Controller.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static IResult GetAllProducts(IProductRepository repository)
         {
-            return TypedResults.Ok(repository.GetAllProducts());
+            var products = repository.GetAllProducts();
+            return products == null ? TypedResults.NotFound("No products found") : TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static IResult DeleteProduct(IProductRepository repository, int id)
         {
-            return TypedResults.Ok(repository.DeleteProduct(id));
+            var products = repository.DeleteProduct(id);
+            return products == null ? TypedResults.NotFound("Product not found") : TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static IResult GetAProduct(IProductRepository repository, int id)
         {
-            return TypedResults.Ok(repository.GetAProduct(id));
+            var products = repository.GetAProduct(id);
+            return products == null ? TypedResults.NotFound("Product not found") : TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static IResult AddProduct(IProductRepository repository, string name, string cathegory, int price)
         {
-            return TypedResults.Ok(repository.AddProduct(name, cathegory, price));
+            var products = repository.AddProduct(name, cathegory, price);
+            return products == null ? TypedResults.BadRequest("Bad input") : TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static IResult UppdateProduct(IProductRepository repository, int id, string newname, string newcathegory, int? newprice)
         {
-            return TypedResults.Ok(repository.UppdateProduct(id, newname, newcathegory, newprice));
+            var products = repository.UppdateProduct(id, newname, newcathegory, newprice);
+            return products == null ? TypedResults.BadRequest("Bad input") : TypedResults.Ok(products);
         }
 
 
