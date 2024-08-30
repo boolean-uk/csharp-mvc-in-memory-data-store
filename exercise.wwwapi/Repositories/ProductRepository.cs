@@ -37,13 +37,22 @@ namespace exercise.wwwapi.Repositories
             return entityExists;
         }
 
-        public Product Get(string Id)
+        public Product GetById(string Id)
         {
             return _db.Products.FirstOrDefault(x => x.Id.ToString() == Id);
         }
 
-        public List<Product> GetAll()
+        public Product GetByName(string name) 
+        { 
+            return _db.Products.FirstOrDefault(y => y.Name == name); 
+        }
+
+        public List<Product> GetAll(string category)
         {
+            if (string.IsNullOrEmpty(category))
+            {
+                return _db.Products.Where(x => x.Category == category).ToList();
+            }
             return _db.Products.ToList();
         }
 
@@ -55,12 +64,14 @@ namespace exercise.wwwapi.Repositories
                 return null;
             }
 
-            entity.Id = new Guid(Id);
+            entityExists.Name = entity.Name;
+            entityExists.Category = entity.Category;
+            entityExists.Price = entity.Price;
 
-            _db.Products.Attach(entity);
-            _db.Entry(entity).State = EntityState.Modified;
+            _db.Products.Attach(entityExists);
+            _db.Entry(entityExists).State = EntityState.Modified;
             _db.SaveChanges();
-            return entity;
+            return entityExists;
         }
     }
 }
