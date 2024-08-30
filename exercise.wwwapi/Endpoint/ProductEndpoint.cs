@@ -26,7 +26,7 @@ namespace exercise.wwwapi.Endpoint
         {
             if (repository.GetAll(category).ToList().Count() == 0) 
             {
-                return TypedResults.NotFound("Not found");
+                return TypedResults.NotFound("No products of the provided category were found.");
             }
 
             return TypedResults.Ok(repository.GetAll(category).ToList());
@@ -38,7 +38,7 @@ namespace exercise.wwwapi.Endpoint
         {
             if (repository.Get(id) == null)
             {
-                return TypedResults.NotFound("Not Found");
+                return TypedResults.NotFound("Product not Found");
             }
 
             return TypedResults.Ok(repository.Get(id));
