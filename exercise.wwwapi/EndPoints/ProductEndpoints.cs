@@ -75,7 +75,7 @@ namespace exercise.wwwapi.EndPoints
                 return TypedResults.NotFound(error);
             }
             
-            // Cant test if price is Null because it will fail before the test in the ProductModel when it does not have an integer value
+            // Can't test if price is Null because it will fail before the test in the ProductModel when it does not have an integer value
             if (!int.TryParse(newValues.Price.ToString(), out int parsedPrice) || newValues.Name == oldProduct.Name)
             {
                 var error = new ErrorMessage("Price must be an integer, something else was provided. / Product with provided name already exists.");
