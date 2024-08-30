@@ -12,28 +12,6 @@ namespace exercise.wwwapi.Repositories
             this._db = db;
         }
 
-        private int _GenerateID() //Generate a unique ID to give to a product that gets added
-        {
-            int id = 0;
-            while (true)
-            {
-                bool found = false;
-                for (int i = 0; i < this._db.products.Count(); i++)
-                {
-                    if (id == this._db.products.ToList().ElementAt(i).id) //ID was not unique
-                    {
-                        found = true;
-                        id++;
-                        break;
-                    }
-                }
-                if (!found) //id is unique
-                {
-                    return id;
-                }
-            }
-        }
-
         public bool Exists(ProductPostModel entity) //Product with this name already exists
         {
             foreach (Product product in this._db.products)
@@ -48,7 +26,7 @@ namespace exercise.wwwapi.Repositories
 
         public Product Create(ProductPostModel entity) //Create a new product and add it to the database
         {
-            Product product = new Product() { id = _GenerateID(), category = entity.category, name = entity.name, price = entity.price };
+            Product product = new Product() { id = 0, category = entity.category, name = entity.name, price = entity.price };
             this._db.Add(product);
             this._db.SaveChanges();
             return product;

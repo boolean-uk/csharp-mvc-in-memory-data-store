@@ -3,8 +3,6 @@
 using exercise.wwwapi.Models;
 using exercise.wwwapi.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.ComponentModel.DataAnnotations;
 
 namespace exercise.wwwapi.Endpoints
 {
