@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 //Register an in memory DbContext
 builder.Services.AddDbContext<ProductDbContext>(options => options.UseInMemoryDatabase("ProductDB"));
-builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ProductsService>();
 builder.Services.AddSingleton<IdGenerator, IdGenerator>();
 builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
 

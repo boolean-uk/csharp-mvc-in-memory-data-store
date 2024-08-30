@@ -6,11 +6,11 @@ namespace exercise.wwwapi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
 
-        private ProductService _productService;
-        public ProductController(ProductService productService)
+        private ProductsService _productService;
+        public ProductsController(ProductsService productService)
         {
             _productService = productService;
         }
@@ -34,10 +34,14 @@ namespace exercise.wwwapi.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<Product> GetAll()
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<Product> GetAll(string? category = null)
         {
 
-            var products = _productService.GetAll();
+            var products = _productService.GetAll(category);
+
+            if (products == null)
+                return NotFound("No products of the provided category were found");
 
             return Ok(products);
         }
@@ -70,7 +74,7 @@ namespace exercise.wwwapi.Controllers
             var updatedProduct = _productService.Update(id, productDTO);
 
             if (updatedProduct == null)
-                return NotFound($"Unable to find product with {id}");
+                return NotFound($"Unable to find product with id: {id} or name already exists");
 
             return Ok(updatedProduct);
         }
@@ -84,7 +88,7 @@ namespace exercise.wwwapi.Controllers
             var deletedProduct = _productService.Delete(id);
 
             if (deletedProduct == null)
-                return NotFound($"Unable to find product with {id}");
+                return NotFound($"Unable to find product with id: {id}");
 
             return Ok(deletedProduct);
         }

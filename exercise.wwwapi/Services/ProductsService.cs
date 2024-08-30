@@ -4,12 +4,12 @@ using exercise.wwwapi.Helpers;
 
 namespace exercise.wwwapi.Services
 {
-    public class ProductService
+    public class ProductsService
     {
         private readonly IRepository<Product> _productRepository;
         private readonly IdGenerator _idGenerator;
 
-        public ProductService(IRepository<Product> repository, IdGenerator idGenerator) 
+        public ProductsService(IRepository<Product> repository, IdGenerator idGenerator) 
         {
             _productRepository = repository;
             _idGenerator = idGenerator;
@@ -17,6 +17,11 @@ namespace exercise.wwwapi.Services
 
         public Product Create(ProductDTO productDTO)
         {
+            var products = _productRepository.GetAll();
+
+            if (products.Any(p => p.Name == productDTO.Name))
+                return null;
+
             var product = new Product
             {
                 Id = _idGenerator.GetNextId(),
@@ -28,9 +33,22 @@ namespace exercise.wwwapi.Services
             return _productRepository.Create(product);
         }
 
-        public List<Product> GetAll()
+        public List<Product> GetAll(string? category)
         {
-            return _productRepository.GetAll();
+
+            var products = _productRepository.GetAll();
+
+            //No category provided
+            if (string.IsNullOrWhiteSpace(category))
+                return products;
+
+            products = products.FindAll(p => p.Category.ToLower() == category.ToLower());
+
+            //No category found
+            if (products.Count() == 0)
+                return null;
+
+            return products;
         }
 
         public Product Get(int id)
@@ -40,6 +58,11 @@ namespace exercise.wwwapi.Services
 
         public Product Update(int id, ProductDTO productDTO)
         {
+            var products = _productRepository.GetAll();
+
+            if (products.Any(p => p.Name == productDTO.Name))
+                return null;
+
             var product = new Product
             {
                 Id = id,
