@@ -46,7 +46,7 @@ namespace exercise.wwwapi.Endpoint
 
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static IResult CreateProduct(IRepository<Product> repository, Product product)
+        public static IResult CreateProduct(IRepository<Product> repository, ProductPostModel product)
         {
             Payload<Product> payload = new Payload<Product>();
 
@@ -54,13 +54,16 @@ namespace exercise.wwwapi.Endpoint
             {
                 return TypedResults.BadRequest("Price must be an integer");
             } 
-            else if (repository.Get(product.ID).Name == product.Name)
+            else if (repository.GetAll().Any(x => x.Name == product.Name))
             {
                 return TypedResults.BadRequest("Product with provided name already exists.");
             }
 
-
-            payload.Data = repository.Create(product);
+            payload.Data = repository.Create(new Product() { 
+                Name = product.Name, 
+                Category = product.Category, 
+                Price = product.Price 
+            });
 
             return TypedResults.Ok(payload.Data);
         }
@@ -80,11 +83,10 @@ namespace exercise.wwwapi.Endpoint
             {
                 return TypedResults.BadRequest("Price must be an integer");
             }
-            else if (repository.Get(product.ID).Name == product.Name)
+            else if (repository.GetAll().Any(x => x.Name == product.Name))
             {
                 return TypedResults.BadRequest("Product with provided name already exists.");
             } 
-
 
             payload.Data = repository.Update(id, product);
 
