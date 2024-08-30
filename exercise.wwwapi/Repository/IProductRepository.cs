@@ -12,6 +12,6 @@ namespace exercise.wwwapi.Repository
 
         public Product DeleteProduct(int id);
 
-        public List<Product> GetAll();
+        public List<Product> GetAll(string category);
     }
 }

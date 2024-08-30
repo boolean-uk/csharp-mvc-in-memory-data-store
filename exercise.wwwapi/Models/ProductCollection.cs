@@ -13,7 +13,9 @@ namespace exercise.wwwapi.Models
             new Product(5, "Taco shells", "Food", 60),
         };
 
-        public static List<Product> GetProducts() { return _products; }
+        public static List<Product> GetProducts(string category) { return _products.Where(x=>x.Category == category).ToList(); }
+
+
         public static Product GetProduct(int id) { return _products.FirstOrDefault(x=>x.Id==id); }
         public static Product AddProduct(Product product)
         {
@@ -30,6 +32,7 @@ namespace exercise.wwwapi.Models
             Product productHere = null;
             if (_products.Find(x => x.Id == id) != null)
             {
+                productHere = _products.Find(x=>x.Id == id);
                 productHere.Name = product.Name;
                 productHere.Category = product.Category;
                 productHere.Price = product.Price;

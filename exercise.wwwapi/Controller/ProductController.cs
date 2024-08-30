@@ -53,10 +53,10 @@ namespace exercise.wwwapi.Controller
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static IResult GetAll(IProductRepository repository)
+        public static IResult GetAll(IProductRepository repository, string category)
         {
-            var result = repository.GetAll();
-            return result == null ? TypedResults.NotFound(result) : TypedResults.Ok(result);
+            List<Product> result = repository.GetAll(category);
+            return result.Count == 0 ? TypedResults.NotFound(result) : TypedResults.Ok(result);
         }
     }
 }

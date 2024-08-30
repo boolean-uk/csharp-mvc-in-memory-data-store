@@ -16,9 +16,9 @@ namespace exercise.wwwapi.Repository
 
         }
 
-        public List<Product> GetAll()
+        public List<Product> GetAll(string category)
         {
-            return ProductCollection.GetProducts();
+            return ProductCollection.GetProducts(category);
         }
 
         public Product GetProduct(int id)
