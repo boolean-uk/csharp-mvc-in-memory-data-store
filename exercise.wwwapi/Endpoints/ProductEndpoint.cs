@@ -22,16 +22,23 @@ public static class ProductEndpoint
     {
         var l = repo.GetAll(category);
         return l.Count > 0 ? TypedResults.Ok(l) : TypedResults.NotFound();
-        
     }
     
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public static IResult AddProduct(IRepository<Product> repo, PutProduct input)
     {
-        if (input.Price.GetType() != typeof(int)) return TypedResults.BadRequest();
-        var p = repo.Add(new Product(input.Name, input.Category, input.Price));
-        return TypedResults.Created($"/{p.Id}", p);
+        try
+        {
+            var pp = input.ToProduct();
+            if (repo.GetAll(pp.Category).Any(x => x.Name.Equals(pp.Name, StringComparison.CurrentCultureIgnoreCase))) return TypedResults.BadRequest("Product already exists.");
+            var p = repo.Add(new Product(pp.Name, pp.Category, pp.Price));
+            return TypedResults.Created($"/{p.Id}", p);
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest("Price must be an integer.");
+        }
     }
     
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -48,10 +55,18 @@ public static class ProductEndpoint
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static IResult UpdateProduct(IRepository<Product> repo, int id, PutProduct input)
     {
-        if (input.Price.GetType() != typeof(int)) return TypedResults.BadRequest();
-        var p = repo.Get(id);
-        if (p is null) return TypedResults.NotFound();
-        return TypedResults.Created($"/{p.Id}", repo.Update(p, p.ToProduct(input)));
+        try
+        {
+            var pp = input.ToProduct();
+            var p = repo.Get(id);
+            if (p is null) return TypedResults.NotFound();
+            if (repo.GetAll(pp.Category).Any(x => x.Name.Equals(pp.Name, StringComparison.CurrentCultureIgnoreCase))) return TypedResults.BadRequest("Product already exists.");
+            return TypedResults.Created($"/{p.Id}", repo.Update(p, pp));
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest("Price must be an integer.");
+        }
     }
     
     
