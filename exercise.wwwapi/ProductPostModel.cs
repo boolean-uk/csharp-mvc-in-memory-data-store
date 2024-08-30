@@ -4,8 +4,6 @@ namespace exercise.wwwapi
 {
     public class ProductPostModel
     {
-        public int? ID { get; set; }
-
         [Required(ErrorMessage  = "Name is required")]
         public string Name { get; set; }
 
