@@ -34,7 +34,7 @@ namespace exercise.wwwapi.Models
                 productHere.Category = product.Category;
                 productHere.Price = product.Price;
                 return productHere;
-            }
+            } else
             return productHere;
         }
 

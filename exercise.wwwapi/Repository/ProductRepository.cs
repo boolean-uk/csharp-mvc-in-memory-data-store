@@ -1,4 +1,5 @@
-﻿using exercise.wwwapi.Models.Data;
+﻿using exercise.wwwapi.Models;
+using exercise.wwwapi.Models.Data;
 
 namespace exercise.wwwapi.Repository
 {
@@ -6,27 +7,28 @@ namespace exercise.wwwapi.Repository
     {
         public Product AddProduct(Product product)
         {
-            throw new NotImplementedException();
+            return ProductCollection.AddProduct(product);
         }
 
         public Product DeleteProduct(int id)
         {
-            throw new NotImplementedException();
+            return ProductCollection.DeleteProduct(id);
+
         }
 
-        public Product GetAll()
+        public List<Product> GetAll()
         {
-            throw new NotImplementedException();
+            return ProductCollection.GetProducts();
         }
 
         public Product GetProduct(int id)
         {
-            throw new NotImplementedException();
+            return ProductCollection.GetProduct(id);
         }
 
         public Product UpdateProduct(int id, Product product)
         {
-            throw new NotImplementedException();
+            return ProductCollection.UpdateProduct(id, product);
         }
     }
 }
