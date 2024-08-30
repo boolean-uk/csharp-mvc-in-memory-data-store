@@ -37,14 +37,12 @@ namespace exercise.wwwapi.Endpoints
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static IResult GetAllProducts(IRepository rep, string category)
+        public static IResult GetAllProducts(IRepository rep, string? category)
         {
 
-            if (rep.GetProducts(category).Count() == 0) {
-                return TypedResults.NotFound("No Products of the provided category were found.");
-            }else {         
+                
                 return TypedResults.Ok(rep.GetProducts(category));
- }
+ 
 
     
 
