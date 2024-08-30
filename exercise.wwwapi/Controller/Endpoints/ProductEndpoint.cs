@@ -34,7 +34,16 @@ namespace exercise.wwwapi.Controller.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public static IResult
+        public static IResult AddProduct(IProductRepository repository, string name, string cathegory, int price)
+        {
+            return TypedResults.Ok(repository.AddProduct(name, cathegory, price));
+        }
+
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public static IResult UppdateProduct(IProductRepository repository, int id, string newname, string newcathegory, int? newprice)
+        {
+            return TypedResults.Ok(repository.UppdateProduct(id, newname, newcathegory, newprice));
+        }
 
 
     }
