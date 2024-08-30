@@ -12,6 +12,11 @@ public class Repository(DataContext db) : IRepository<Product>
         return p;
     }
 
+    public List<Product> GetAll()
+    {
+        return db.Products.ToList();
+    }
+    
     public List<Product> GetAll(string category)
     {
         return db.Products.Where(p => p.Category.ToLower().Equals(category.ToLower())).ToList();

@@ -18,9 +18,9 @@ public static class ProductEndpoint
     
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public static IResult GetAllProducts(IRepository<Product> repo, string category)
+    public static IResult GetAllProducts(IRepository<Product> repo, string? category)
     {
-        var l = repo.GetAll(category);
+        var l = category is null ? repo.GetAll() : repo.GetAll(category);
         return l.Count > 0 ? TypedResults.Ok(l) : TypedResults.NotFound();
     }
     
