@@ -23,6 +23,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+/*Exception handling*/
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next(context);
+    }
+    catch (BadHttpRequestException ex)
+    {
+        var exceptionMessage = ex.Message;
+        await Results.BadRequest($"Price must be an integer, something else was provided").ExecuteAsync(context);
+    }
+});
+
 app.ConfigureProductEndpoints();
 
 app.Run();
