@@ -22,14 +22,14 @@ namespace exercise.wwwapi.Endpoint
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static IResult GetProducts(IRepository<Product> repository)
+        public static IResult GetProducts(IRepository<Product> repository, string category)
         {
-            if (repository.GetAll().ToList().Count() == 0) 
+            if (repository.GetAll(category).ToList().Count() == 0) 
             {
                 return TypedResults.NotFound("Not found");
             }
 
-            return TypedResults.Ok(repository.GetAll().ToList());
+            return TypedResults.Ok(repository.GetAll(category).ToList());
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -54,7 +54,7 @@ namespace exercise.wwwapi.Endpoint
             {
                 return TypedResults.BadRequest("Price must be an integer");
             } 
-            else if (repository.GetAll().Any(x => x.Name == product.Name))
+            else if (repository.GetAll(null).Any(x => x.Name == product.Name))
             {
                 return TypedResults.BadRequest("Product with provided name already exists.");
             }
@@ -83,7 +83,7 @@ namespace exercise.wwwapi.Endpoint
             {
                 return TypedResults.BadRequest("Price must be an integer");
             }
-            else if (repository.GetAll().Any(x => x.Name == product.Name))
+            else if (repository.GetAll(null).Any(x => x.Name == product.Name))
             {
                 return TypedResults.BadRequest("Product with provided name already exists.");
             } 

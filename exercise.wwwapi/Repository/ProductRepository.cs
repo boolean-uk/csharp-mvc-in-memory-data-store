@@ -19,7 +19,7 @@ namespace exercise.wwwapi.Repository
         {
             if (_dbSet.Any(x => x.Name == entity.Name)) return null;
 
-            entity.ID = _dbSet.Max(x => x.ID);
+            entity.ID = _dbSet.Max(x => x.ID) + 1;
 
             _dbSet.Add(entity);
             _db.SaveChanges();
@@ -41,9 +41,14 @@ namespace exercise.wwwapi.Repository
             return _dbSet.FirstOrDefault(product => product.ID == id);
         }
 
-        public List<Product> GetAll()
+        public List<Product> GetAll(string category)
         {
-            return _dbSet.ToList();
+            if (string.IsNullOrWhiteSpace(category)) 
+            {
+                return _dbSet.ToList();
+            }
+
+            return _dbSet.Where(x => x.Category == category).ToList();
         }
 
         public Product Update(int id, Product entity)
