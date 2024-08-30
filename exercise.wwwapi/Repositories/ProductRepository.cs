@@ -11,6 +11,11 @@ namespace exercise.wwwapi.Repositories
             this._db = db;
         }
 
+        public List<Product> GetAll()
+        {
+            return _db.Products.ToList();
+        }
+
         public Product Add(Product product)
         {
             _db.Add(product);

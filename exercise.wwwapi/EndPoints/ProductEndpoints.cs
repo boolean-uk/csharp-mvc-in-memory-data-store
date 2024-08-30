@@ -22,13 +22,13 @@ namespace exercise.wwwapi.EndPoints
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static IResult CreateProduct(IRepository repository, ProductModel product)
         {
-            if (product == null)
+            if (!int.TryParse(product.Price.ToString(), out int parsedPrice) || repository.GetAll().Any(p => p.Name == product.Name))  
             {
                 var error = new ErrorMessage("Price must be an integer, something else was provided. / Product with provided name already exists.");
                 return TypedResults.BadRequest(error);
             }
 
-            repository.Add(new Product() { Name = product.Name, Category = product.Category, Price = product.Price });
+            repository.Add(new Product() { Name = product.Name, Category = product.Category, Price = parsedPrice });
 
             return TypedResults.Created();
         }
@@ -61,6 +61,7 @@ namespace exercise.wwwapi.EndPoints
             return TypedResults.Ok(product);
         }
 
+
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -73,14 +74,15 @@ namespace exercise.wwwapi.EndPoints
                 var error = new ErrorMessage("Product not Found.");
                 return TypedResults.NotFound(error);
             }
-
-            if (newValues == null)
+            
+            // Cant test if price is Null because it will fail before the test in the ProductModel when it does not have an integer value
+            if (!int.TryParse(newValues.Price.ToString(), out int parsedPrice) || newValues.Name == oldProduct.Name)
             {
                 var error = new ErrorMessage("Price must be an integer, something else was provided. / Product with provided name already exists.");
                 return TypedResults.BadRequest(error);
             }
 
-            Product newProductValues = new Product() { Name = newValues.Name, Category = newValues.Category, Price = newValues.Price };
+            Product newProductValues = new Product() { Name = newValues.Name, Category = newValues.Category, Price = parsedPrice };
 
             repository.Update(id, newProductValues);
 
