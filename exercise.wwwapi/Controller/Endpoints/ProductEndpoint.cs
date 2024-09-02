@@ -22,7 +22,7 @@ namespace exercise.wwwapi.Controller.Endpoints
         public static IResult GetAllProducts(IProductRepository repository)
         {
             var products = repository.GetAllProducts();
-            return products == null ? TypedResults.NotFound("No products found") : TypedResults.Ok(products);
+            return products is null ? TypedResults.NotFound("No products found") : TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -30,7 +30,7 @@ namespace exercise.wwwapi.Controller.Endpoints
         public static IResult DeleteProduct(IProductRepository repository, int id)
         {
             var products = repository.DeleteProduct(id);
-            return products == null ? TypedResults.NotFound("Product not found") : TypedResults.Ok(products);
+            return products is null ? TypedResults.NotFound("Product not found") : TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -38,7 +38,7 @@ namespace exercise.wwwapi.Controller.Endpoints
         public static IResult GetAProduct(IProductRepository repository, int id)
         {
             var products = repository.GetAProduct(id);
-            return products == null ? TypedResults.NotFound("Product not found") : TypedResults.Ok(products);
+            return products is null ? TypedResults.NotFound("Product not found") : TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -46,7 +46,7 @@ namespace exercise.wwwapi.Controller.Endpoints
         public static IResult AddProduct(IProductRepository repository, string name, string cathegory, int price)
         {
             var products = repository.AddProduct(name, cathegory, price);
-            return products == null ? TypedResults.BadRequest("Bad input") : TypedResults.Ok(products);
+            return products is null ? TypedResults.BadRequest("Bad input") : TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -55,7 +55,7 @@ namespace exercise.wwwapi.Controller.Endpoints
         public static IResult UppdateProduct(IProductRepository repository, int id, string newname, string newcathegory, int? newprice)
         {
             var products = repository.UppdateProduct(id, newname, newcathegory, newprice);
-            return products == null ? TypedResults.BadRequest("Bad input") : TypedResults.Ok(products);
+            return products is null ? TypedResults.BadRequest("Bad input") : TypedResults.Ok(products);
         }
 
 
