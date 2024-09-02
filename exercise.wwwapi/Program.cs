@@ -1,9 +1,14 @@
+using exercise.wwwapi.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMvc();
+builder.Services.AddDbContext<ProductContext>(options => options.UseInMemoryDatabase("ProductsDatabase"));
 
 var app = builder.Build();
 
@@ -16,5 +21,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.Run();
+app.MapControllers();
+app.MapRazorPages();
 
+app.Run();
