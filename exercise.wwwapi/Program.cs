@@ -1,3 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using exercise.wwwapi.Data;
+using exercise.wwwapi.Endpoints;
+using exercise.wwwapi.Repository;
+using exercise.wwwapi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+builder.Services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("ProductDb"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -15,6 +23,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.ConfigureCarEndpoint();
 
 app.Run();
 
