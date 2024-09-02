@@ -12,12 +12,30 @@ namespace exercise.wwwapi.Controller
 
         public static Product CreateProduct(Product product)
         {
-            products.Add(product);
-            return product;
+            if (product.price.GetType() == typeof(int))
+            {
+                foreach (var item in products)
+                {
+                    if (item.Name == product.Name)
+                    {
+                        return null;
+                    }
+                }
+                products.Add(product);
+                return product;
+            }
+
+            return null;
+
         }
 
-        public static List<Product> GetAll()
+        public static List<Product> GetAll(string category)
         {
+            var newProducts = products.Where(x => x.Category.Equals(category.ToLower())).ToList();
+            if (newProducts.Count > 0)
+            {
+                return newProducts;
+            }
             return products.ToList();
         }
 
@@ -29,10 +47,18 @@ namespace exercise.wwwapi.Controller
         public static Product Update(Product newProduct, int id)
         {
             Product product = Get(id);
+
             product.Id = newProduct.Id;
             product.Name = newProduct.Name;
             product.Category = newProduct.Category;
             product.price = newProduct.price;
+            return product;
+        }
+
+        public static Product Delete(int id)
+        {
+            Product product = Get(id);
+            products.Remove(product);
             return product;
         }
     }

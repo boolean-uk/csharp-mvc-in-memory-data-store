@@ -2,11 +2,11 @@
 {
     public interface IProduct<T> where T : class
     {
-        List<T> GetAll();
+        List<T> GetAll(string category);
         T CreateProduct(T entity);
         T Get(int id);
         T Update(T entity, int id);
-        T Delete(string name);
+        T Delete(int id);
 
     }
 }

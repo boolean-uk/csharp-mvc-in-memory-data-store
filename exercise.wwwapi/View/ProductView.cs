@@ -14,9 +14,9 @@ namespace exercise.wwwapi.View
             return ProductController.Update(entity, id);
         }
 
-        Product IProduct<Product>.Delete(string name)
+        Product IProduct<Product>.Delete(int id)
         {
-            throw new NotImplementedException();
+            return ProductController.Delete(id);
         }
 
         Product IProduct<Product>.Get(int id)
@@ -24,9 +24,9 @@ namespace exercise.wwwapi.View
             return ProductController.Get(id);
         }
 
-        List<Product> IProduct<Product>.GetAll()
+        List<Product> IProduct<Product>.GetAll(string category)
         {
-            return ProductController.GetAll();
+            return ProductController.GetAll(category);
         }
     }
 }
