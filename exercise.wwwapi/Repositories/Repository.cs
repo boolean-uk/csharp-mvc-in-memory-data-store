@@ -41,10 +41,23 @@ namespace exercise.wwwapi.Repositories
         public Product UpdateProduct(int id, Product product)
         {
             Product productToBeUpdated = GetSingleProduct(id);
+
             if (productToBeUpdated == null)
             {
                 return null;
             }
+
+            if (ProductExists(product.Name))
+            {
+                foreach(var p in GetProductsWithName(product.Name))
+                {
+                    if (p.Id != product.Id)
+                    {
+                        return null;
+                    }
+                }
+            }
+
             productToBeUpdated.Name = product.Name;
             productToBeUpdated.Category = product.Category;
             productToBeUpdated.Price = product.Price;
@@ -60,6 +73,11 @@ namespace exercise.wwwapi.Repositories
                 return true;
             }
             return false;
+        }
+
+        public List<Product> GetProductsWithName(string name)
+        {
+            return _db.Products.Where(p => p.Name == name).ToList();
         }
     }
 }
