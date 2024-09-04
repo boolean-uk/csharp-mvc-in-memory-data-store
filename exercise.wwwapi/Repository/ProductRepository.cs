@@ -8,49 +8,58 @@ namespace exercise.wwwapi.Repository
     {
 
         private ProductDataContext _db;
-        private DbSet<Product> _dbSet;
 
-        public ProductRepository(ProductDataContext db, DbSet<Product> dbSet)
+
+        public ProductRepository(ProductDataContext db)
         {
             _db = db;
-            _dbSet = dbSet;
+
         }
 
         public Product Create(Product product)
         {
-            throw new NotImplementedException();
+           _db.Products.Add(product);
+            _db.SaveChanges();
+            return product;
         }
 
         public Product Get(int id)
         {
-            return _dbSet.FirstOrDefault(x => x.Id == id);
+            return _db.Products.FirstOrDefault(x => x.Id == id);
         }
 
         public List<Product> GetAllProducts(string Category)
         {
             if (string.IsNullOrWhiteSpace(Category))
             {
-                return _dbSet.ToList();
+                return _db.Products.ToList();
             }
             else
             {
-                return _dbSet.Where(x => x.Category == Category).ToList();
+                return _db.Products.Where(x => x.Category == Category).ToList();
             }
         }
 
         public Product Delete(int id)
         {
-            Product deletedproduct = _dbSet.FirstOrDefault(x => x.Id == id);
-    
-             _dbSet.Remove(deletedproduct);
-             _db.SaveChanges();
-            
+            Product deletedproduct = _db.Products.FirstOrDefault(x => x.Id == id);
+
+            _db.Products.Remove(deletedproduct);
+            _db.SaveChanges();
+
             return deletedproduct;
         }
 
         public Product Update(Product entity, int id)
         {
             throw new NotImplementedException();
+        }
+
+        public Product GetByName(string Name)
+        {
+            var product = _db.Products.FirstOrDefault(x => x.Name == Name);
+            return product;
+
         }
     }
 }

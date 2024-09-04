@@ -12,5 +12,7 @@ namespace exercise.wwwapi.Repository
 
         T Delete(int id);
         List<Product> GetAllProducts(string category);
+
+        T GetByName(string name);
     }
 }

@@ -12,7 +12,7 @@ namespace exercise.wwwapi.Endpoints
             var products = app.MapGroup("products");
             products.MapGet("/", GetAllProducts);
             products.MapGet("{id}", GetProduct);
-          //  products.MapPost("/", CreateProduct);
+            products.MapPost("/", CreateProduct);
            // products.MapPut("{id}", UpdateProduct);
             products.MapDelete("{id}", DeleteProduct);
         }
@@ -66,11 +66,14 @@ namespace exercise.wwwapi.Endpoints
         {
             Payload<Product> payload = new Payload<Product>();
 
-            if(!(model.Price is int))
+            if (!(model.Price is int))
             {
                 return TypedResults.BadRequest("Price Must be an integer");
             }
-
+            else if (repository.GetByName(model.Name) != null)
+            {
+                return TypedResults.BadRequest("Product with provided name already exists");
+            }
             payload.data = repository.Create(new Product()
             {
                 Name = model.Name,
