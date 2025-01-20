@@ -10,4 +10,5 @@ public interface IRepository<T> where T : class
     
     // Also part of "Create", just better
     T GetByName(string name);
+    List<T> GetAll();
 }
