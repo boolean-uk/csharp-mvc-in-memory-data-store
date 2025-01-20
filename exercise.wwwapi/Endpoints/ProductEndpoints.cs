@@ -1,7 +1,9 @@
-﻿using exercise.wwwapi.Models;
+﻿using System.Reflection.Metadata.Ecma335;
+using exercise.wwwapi.Models;
 using exercise.wwwapi.Repository;
 using exercise.wwwapi.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace exercise.wwwapi.Endpoints
 {
@@ -19,9 +21,10 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> GetProducts(IRepository repository)
+        public static async Task<IResult> GetProducts(IRepository repository, string category)
         {
-            var products = await repository.GetAll();
+            var products = await repository.GetAll(category);
+            if (products.Count() == 0) return TypedResults.NotFound("No products of the provided category were found");
             return TypedResults.Ok(products);
         }
 
@@ -29,6 +32,7 @@ namespace exercise.wwwapi.Endpoints
         public static async Task<IResult> GetProduct(IRepository repository, int id)
         {
             var product = await repository.Get(id);
+            if (product == null) return TypedResults.NotFound("Product not found.");
             return TypedResults.Ok(product);
         }
 
@@ -36,6 +40,8 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> AddProduct(IRepository repository, ProductViewModel model)
         {
+            if (model.price <= 0) return TypedResults.BadRequest("Price must be more than zero (0).");
+            if (repository.NameExists(model.name, 0).Result) return TypedResults.BadRequest("Product with provided name already exists");
             try
             {
                 Product product = new Product()
@@ -61,8 +67,9 @@ namespace exercise.wwwapi.Endpoints
             try
             {
                 var model = await repository.Get(id);
-                if (await repository.Delete(id)) return Results.Ok(new { When = DateTime.Now, Status = "Deleted", name = model.name, category = model.category, price = model.price });
-                return TypedResults.NotFound();
+                if (model == null) return TypedResults.NotFound("Product not found.");
+                if (await repository.Delete(id)) return TypedResults.Ok(model);
+                return TypedResults.NotFound("Product not found.");
             }
             catch (Exception ex)
             {
@@ -76,8 +83,21 @@ namespace exercise.wwwapi.Endpoints
         {
             try
             {
-                repository.Update(id, model);
-                return Results.Ok(model);
+                if (model.price <= 0) return TypedResults.BadRequest("Price must be more than zero (0).");
+                var target = await repository.Get(id);
+                var alreadyExists = await repository.NameExists(model.name, id);
+                if (target == null) return TypedResults.NotFound("Product not found.");
+                if (alreadyExists) return TypedResults.BadRequest("Product with provided name already exists");
+                if (model.name != "" && model.price != 0 && model.category != "")
+                {
+                    target.name = model.name;
+                    target.price = model.price;
+                    target.category = model.category;
+                    repository.Update(target);
+                    return TypedResults.Ok(model);
+                }
+                return TypedResults.BadRequest("Price must be an integer, something else was provided. / Product with provided name already exists");
+                
             }
             catch (Exception ex)
             {

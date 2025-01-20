@@ -19,9 +19,9 @@ namespace exercise.wwwapi.Repository
             return await _db.Products.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<Product>> GetAll()
+        public async Task<IEnumerable<Product>> GetAll(string category)
         {
-            return await _db.Products.ToListAsync();
+            return await _db.Products.Where(x => x.category.ToLower() == category.ToLower()).ToListAsync();
         }
 
         public async Task<Product> Add(Product entity)
@@ -39,14 +39,17 @@ namespace exercise.wwwapi.Repository
             return true;
         }
 
-        public async Task<Product> Update(int id, ProductViewModel entity)
+        public async Task<Product> Update(Product entity)
         {
-            var target = await _db.Products.FindAsync(id);
-            target.name = entity.name;
-            target.category = entity.category;
-            target.price = entity.price;
+            _db.Products.Update(entity);
             await _db.SaveChangesAsync();
-            return target;
+            return entity;
+        }
+
+        public async Task<bool> NameExists(string name, int id)
+        {
+            var exists = await _db.Products.FirstOrDefaultAsync(x => x.name == name && x.Id != id) != null;
+            return exists;
         }
 
     }
