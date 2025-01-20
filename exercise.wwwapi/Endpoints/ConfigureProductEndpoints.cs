@@ -31,7 +31,7 @@ namespace exercise.wwwapi.Endpoints
                 var result = await repository.GetAll();
                 if (string.IsNullOrEmpty(category))
                     return TypedResults.Ok(result);
-                result = result.Where(x => x.Category.ToLower() == category.ToLower());
+                result = result.Where(x => x.Category.Contains(category, StringComparison.OrdinalIgnoreCase));
                 if (!result.Any()) return TypedResults.NotFound(new {Message = "No products of the provided category was found"});
                 return TypedResults.Ok(result);
 
@@ -68,7 +68,7 @@ namespace exercise.wwwapi.Endpoints
             try
             {
                 var products = await repository.GetAll();
-                if (products.Any(p => p.Name.ToLower() == entity.Name.ToLower()))
+                if (products.Any(p => p.Name.Equals(entity.Name, StringComparison.OrdinalIgnoreCase)))
                     return TypedResults.BadRequest(new { Message =  $"Product {entity.Name} already exists!" });
 
                 Product product = await repository.Add(new Product { Name = entity.Name, Category = entity.Category, Price = entity.Price });
@@ -87,7 +87,7 @@ namespace exercise.wwwapi.Endpoints
             try
             {
                 var products = await repository.GetAll();
-                if (entity.Name != null && products.Any(p => p.Name.ToLower() == entity.Name.ToLower()))
+                if (entity.Name != null && products.Any(p => p.Name.Equals(entity.Name, StringComparison.OrdinalIgnoreCase)))
                     return TypedResults.BadRequest(new { Message = $"Product {entity.Name} already exists!" });
                 Product product = await repository.Get(id);
                 if (entity.Name != null) product.Name = entity.Name;
