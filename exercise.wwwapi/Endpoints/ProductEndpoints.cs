@@ -24,12 +24,9 @@ public static class ProductEndpoints
         List<Product> products;
         
         products = category is not null ? repository.GetAll(category) : repository.GetAll();
-        
-        if (products.Count == 0)
-        {
-            return TypedResults.NotFound();
-        }
-        
+
+        if (products.Count == 0) return TypedResults.NotFound();
+
         return TypedResults.Ok(products);
     }
     
@@ -37,13 +34,10 @@ public static class ProductEndpoints
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     private static IResult GetProduct([FromServices] IRepository<Product> repository, Guid id)
     {
-        Product? product = repository.Read(id);
-        
-        if (product is null)
-        {
-            return TypedResults.NotFound();
-        }
-        
+        var product = repository.Read(id);
+
+        if (product is null) return TypedResults.NotFound();
+
         return TypedResults.Ok(product);
     }
     
@@ -52,13 +46,10 @@ public static class ProductEndpoints
     private static IResult CreateProduct([FromServices] IRepository<Product> repository, Product product)
     {
         // Checks if product already exists. Duplicate name is bad
-        if (repository.GetByName(product.Name) is not null)
-        {
-            return TypedResults.Conflict();
-        }
-        
-        Product createdProduct = repository.Create(product);
-        
+        if (repository.GetByName(product.Name) is not null) return TypedResults.Conflict();
+
+        var createdProduct = repository.Create(product);
+
         return TypedResults.Created(createdProduct.Id.ToString());
     }
     
@@ -67,10 +58,7 @@ public static class ProductEndpoints
     private static IResult UpdateProduct([FromServices] IRepository<Product> repository, Guid id, Product product)
     {
         var existingProduct = repository.Read(id);
-        if (existingProduct is null)
-        {
-            return TypedResults.NotFound();
-        }
+        if (existingProduct is null) return TypedResults.NotFound();
 
         // I get System.InvalidOperationException without this :(
         repository.Detach(existingProduct);
@@ -85,11 +73,8 @@ public static class ProductEndpoints
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     private static IResult DeleteProduct([FromServices] IRepository<Product> repository, Guid id)
     {
-        if (repository.Read(id) is null)
-        {
-            return TypedResults.NotFound();
-        }
-        
+        if (repository.Read(id) is null) return TypedResults.NotFound();
+
         repository.Delete(id);
         
         return TypedResults.NoContent();

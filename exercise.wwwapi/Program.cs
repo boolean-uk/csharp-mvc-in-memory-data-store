@@ -23,25 +23,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// TODO: Remove! This is just for testing
-var product = new Product
-{
-    Name = "Bagel",
-    Price = 1.99m,
-    Category = "Food"
-};
-
-using (var scope = app.Services.CreateScope())
-{
-    var repository = scope.ServiceProvider.GetRequiredService<IRepository<Product>>();
-    repository.Create(product);
-}
-
-// TODO: Keep the remaining code
-
 app.UseHttpsRedirection();
 
 app.ConfigureEndpoints();
 
 app.Run();
-

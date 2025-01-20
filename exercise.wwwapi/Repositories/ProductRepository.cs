@@ -1,14 +1,13 @@
 using exercise.wwwapi.DB;
 using exercise.wwwapi.Models;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace exercise.wwwapi.Repositories;
 
 public class ProductRepository : IRepository<Product>
 {
-    private ProductContext _ctx;
-    
+    private readonly ProductContext _ctx;
+
     public ProductRepository(ProductContext ctx)
     {
         _ctx = ctx;
