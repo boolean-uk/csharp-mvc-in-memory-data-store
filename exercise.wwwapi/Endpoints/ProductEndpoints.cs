@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace exercise.wwwapi.Controllers;
 
-public static class ProductController
+public static class ProductEndpoints
 {
     public static void ConfigureEndpoints(this WebApplication app)
     {
