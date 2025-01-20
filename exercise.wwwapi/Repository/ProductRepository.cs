@@ -30,9 +30,9 @@ namespace exercise.wwwapi.Repository
             return await _db.Products.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Product>> GetAll()
+        public async Task<IEnumerable<Product>> GetAll(string category="")
         {
-            return await _db.Products.ToListAsync();
+            return await _db.Products.Where(prod => prod.category==category).ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> Update(int id, string name, string category, int price)

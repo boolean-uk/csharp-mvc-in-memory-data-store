@@ -14,7 +14,7 @@ namespace exercise.wwwapi.Endpoints
             var products = app.MapGroup("products");
 
             products.MapGet("/{id}", Get);
-            products.MapGet("/", GetAll);
+            products.MapGet("/{category}", GetAll);
             products.MapPost("/", Add);
             products.MapPut("/{id}", Update);
             products.MapDelete("/{id}", Remove);
@@ -24,28 +24,51 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> Get(IRepository repo ,int id)
         {
-            var result = await repo.Get(id);
-            return TypedResults.Ok(result);
+            try
+            {
+                var result = await repo.Get(id);
+                return TypedResults.Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return TypedResults.Problem(ex.Message);
+            }
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> GetAll(IRepository repo )
+        public static async Task<IResult> GetAll(IRepository repo, string category="" )
         {
-            var result = await repo.GetAll();
-            return TypedResults.Ok(result);
+            try
+            {
+                var result = await repo.GetAll();
+                return TypedResults.Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return TypedResults.Problem(ex.Message);
+            }
+
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> Add(IRepository repo, ProductPost entity)
         {
-            Product newProduct = new Product();
-            newProduct.price = entity.price;
-            newProduct.name = entity.name;
-            newProduct.category = entity.category;
-            await repo.Add(newProduct);
-            return TypedResults.Ok(newProduct);
+            try
+            {
+                Product newProduct = new Product();
+                newProduct.price = entity.price;
+                newProduct.name = entity.name;
+                newProduct.category = entity.category;
+                await repo.Add(newProduct);
+                return TypedResults.Ok(newProduct);
+            }
+            catch (Exception e)
+            {
+                return TypedResults.Problem(e.Message);
+            }
+
         }
         /// <summary>
         /// updates Product
@@ -84,7 +107,6 @@ namespace exercise.wwwapi.Endpoints
                 var target = await repo.Get(id);
                 if (await repo.Delete(id)!=null) return Results.Ok(target);
                 return TypedResults.NotFound();
-
             }
             catch(Exception e) 
             {
