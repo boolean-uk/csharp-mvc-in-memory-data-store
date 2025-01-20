@@ -1,7 +1,9 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using exercise.wwwapi.Data;
 using exercise.wwwapi.Repository;
 using exercise.wwwapi.Endpoints;
+using exercise.wwwapi.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRepository, ProductRepository>();
-builder.Services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("Pets"));
+builder.Services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("Products"));
+builder.Services.AddValidatorsFromAssemblyContaining<ProductValidation>();
 
 var app = builder.Build();
 
