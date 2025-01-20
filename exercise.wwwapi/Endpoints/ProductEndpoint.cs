@@ -9,7 +9,7 @@ namespace workshop.wwwapi.Endpoints
     {
         public static void ConfigureProductEndpoint(this WebApplication app)
         {
-            var pets = app.MapGroup("pets");
+            var pets = app.MapGroup("products");
 
             pets.MapGet("/", GetProduct);
             pets.MapPost("/", AddProduct);
