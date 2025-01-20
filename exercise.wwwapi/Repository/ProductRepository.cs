@@ -50,5 +50,10 @@ namespace exercise.wwwapi.Repository
             await _db.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Product?> GetProductByName(string name)
+        {
+            return await _db.Products.FirstOrDefaultAsync(p => p.Name == name);
+        }
     }
 }

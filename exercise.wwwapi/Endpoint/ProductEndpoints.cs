@@ -58,7 +58,13 @@ namespace exercise.wwwapi.Endpoint
         {
             if (product.Price < 0)
             {
-                return Results.BadRequest(new { message = "Price must be a positive integer" });
+                return Results.BadRequest(new { message = "Price must be a positive integer." });
+            }
+
+            var existingProduct = await repository.GetProductByName(product.Name);
+            if (existingProduct != null)
+            {
+                return Results.BadRequest(new { message = "Product with provided name already exists." });
             }
 
             var createdProduct = await repository.AddProduct(new Product
@@ -77,15 +83,21 @@ namespace exercise.wwwapi.Endpoint
         [ProducesResponseType(StatusCodes.Status201Created)]
         public static async Task<IResult> UpdateProduct(IProductRepository repository, int id, ProductDTO product)
         {
-            if (product.Name == null || product.Category == null || product.Price < 0)
+            if (product.Price < 0)
             {
-                return Results.BadRequest(new { message = "Must include all fields. Price must be a positive integer" });
+                return Results.BadRequest(new { message = "Price must be a positive integer" });
             }
 
             var existingProduct = await repository.GetSingleProduct(id);
             if (existingProduct == null)
             {
                 return Results.NotFound(new { message = "Not found." });
+            }
+
+            var existingProductName = await repository.GetProductByName(product.Name);
+            if (existingProductName != null)
+            {
+                return Results.BadRequest(new { message = "Product with provided name already exists." });
             }
 
             existingProduct.Name = product.Name;
