@@ -1,0 +1,16 @@
+using System;
+using System.Net.Http.Headers;
+using exercise.wwwapi.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace exercise.wwwapi.Data;
+
+public class DataContext : DbContext
+{
+    public DataContext(DbContextOptions<DataContext> options) : base(options)
+    {
+
+    }
+
+    public DbSet<Product> Product {get; set;}
+}
