@@ -43,9 +43,16 @@ public class ProductRepository : IRepository
         return found;
     }
 
-    public async Task<IEnumerable<Product>> GetProducts()
+    public async Task<IEnumerable<Product>> GetProducts(string? search)
     {
-        return await _db.Products.ToListAsync();
+        if (search == null)
+        {
+            return await _db.Products.ToListAsync();
+        }
+        else
+        {
+            return await _db.Products.Where(p => p.Category == search).ToListAsync();
+        }
     }
 
     public async Task<Product> UpdateProduct(Guid Id, ProductPut productView)

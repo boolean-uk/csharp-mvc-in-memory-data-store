@@ -46,9 +46,11 @@ public static class ProductEndpoint
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public static async Task<IResult> GetProducts(IRepository repository)
+    public static async Task<IResult> GetProducts(IRepository repository, [FromQuery] string? search = null)
     {
-        var products = await repository.GetProducts();
+        if (search != null) search = search.ToLower();
+        
+        var products = await repository.GetProducts(search);
         if (products.Count() == 0)
         {
             return TypedResults.NotFound();

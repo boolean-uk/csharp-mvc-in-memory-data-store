@@ -6,7 +6,7 @@ namespace exercise.wwwapi.Repositories;
 
 public interface IRepository
 {
-    Task<IEnumerable<Product>> GetProducts();
+    Task<IEnumerable<Product>> GetProducts(string search);
     Task<Product> GetProduct(Guid id);
     Task<bool> DeleteProduct(Guid id);
     Task<Product> AddProduct(Product product);
