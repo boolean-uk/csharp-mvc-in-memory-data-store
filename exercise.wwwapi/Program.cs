@@ -1,5 +1,5 @@
-using exercise.wwwapi.Controllers;
 using exercise.wwwapi.DB;
+using exercise.wwwapi.Endpoints;
 using exercise.wwwapi.Models;
 using exercise.wwwapi.Repositories;
 using Microsoft.EntityFrameworkCore;

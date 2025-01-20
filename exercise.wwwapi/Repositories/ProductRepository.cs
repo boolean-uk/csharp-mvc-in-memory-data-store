@@ -21,28 +21,44 @@ public class ProductRepository : IRepository<Product>
         return entity;
     }
 
-    public Product Read(Guid id)
+    public Product? Read(Guid id)
     {
-        throw new NotImplementedException();
+        return _ctx.Products.Find(id);
     }
 
     public Product Update(Product entity)
     {
-        throw new NotImplementedException();
+        _ctx.Entry(entity).State = EntityState.Modified;
+        _ctx.SaveChanges();
+        return entity;
     }
 
     public void Delete(Guid id)
     {
-        throw new NotImplementedException();
+        var product = _ctx.Products.Find(id);
+        
+        _ctx.Products.Remove(product);
+        _ctx.SaveChanges();
     }
 
-    public Product GetByName(string name)
+    public Product? GetByName(string name)
     {
-        throw new NotImplementedException();
+        return _ctx.Products.FirstOrDefault(p => p.Name == name);
     }
 
     public List<Product> GetAll()
     {
         return _ctx.Products.ToList();
+    }
+    
+    public List<Product> GetAll(string category)
+    {
+        return _ctx.Products.Where(p => p.Category == category).ToList();
+    }
+    
+    
+    public void Detach(Product entity)
+    {
+        _ctx.Entry(entity).State = EntityState.Detached;
     }
 }
