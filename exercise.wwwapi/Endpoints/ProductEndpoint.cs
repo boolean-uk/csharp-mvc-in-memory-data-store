@@ -2,6 +2,7 @@
 using exercise.wwwapi.Models;
 using exercise.wwwapi.Repositories;
 using exercise.wwwapi.ViewModels;
+using Microsoft.VisualBasic;
 
 namespace exercise.wwwapi.Endpoints
 {
@@ -11,7 +12,7 @@ namespace exercise.wwwapi.Endpoints
         {
             var products = app.MapGroup("products");
 
-            products.MapGet("/byCategory/{category}", GetProductsByCategory);
+            products.MapGet("/GetAll", GetProductsByCategory);
             products.MapGet("/{id}", GetProduct);
             products.MapPost("/", AddProduct);
             products.MapDelete("/{id}", DeleteProduct);
@@ -20,17 +21,27 @@ namespace exercise.wwwapi.Endpoints
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> GetProductsByCategory(IProductRepository repository, string category)
+        public static async Task<IResult> GetProductsByCategory(IProductRepository repository, string? category = null)
         {
-            category = category.ToLower();
-            var productsOfCategory = await repository.GetProductsByCategory(category);
+            if (string.IsNullOrEmpty(category))
+            {
+                var allProducts = await repository.GetProducts();
+                if (!allProducts.Any())
+                {
+                    return Results.NotFound("No products found");
+                }
+                return TypedResults.Ok(allProducts);
 
-            if (!productsOfCategory.Any())
+            }
+            category = category.ToLower();
+            var products = await repository.GetProductsByCategory(category);
+
+            if (!products.Any())
             {
                 return Results.NotFound("No products of the provided category were found");
             }
 
-            return TypedResults.Ok(productsOfCategory);
+            return TypedResults.Ok(products);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -64,6 +75,12 @@ namespace exercise.wwwapi.Endpoints
                 {
                     return TypedResults.BadRequest("Price must be an integer, something else was provided");
                 }
+
+                if (model.price <= 0)
+                {
+                    return TypedResults.BadRequest("Prie can not be 0 or negative");
+                }
+
                 var checkExsisting = await repository.GetProducts();
                 if (checkExsisting.Any(p => p.name.Equals(model.name)))
                 {
@@ -114,6 +131,10 @@ namespace exercise.wwwapi.Endpoints
                 if (model.price != null && !int.TryParse(model.price.ToString(), out int parsedPrice))
                 {
                     return TypedResults.BadRequest("Price must be an integer, something else was provided");
+                }
+                if (model.price <= 0)
+                {
+                    return TypedResults.BadRequest("Prie can not be 0 or negative");
                 }
                 var checkExsisting = await repository.GetProducts();
                 if (!string.IsNullOrEmpty(model.name) && checkExsisting.Any(p => p.name.Equals(model.name)))
