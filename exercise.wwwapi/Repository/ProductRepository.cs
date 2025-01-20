@@ -21,6 +21,7 @@ namespace exercise.wwwapi.Repository
 
         public async Task<IEnumerable<Product>> GetAll(string category)
         {
+            if (string.IsNullOrWhiteSpace(category)) return await _db.Products.ToListAsync();
             return await _db.Products.Where(x => x.category.ToLower() == category.ToLower()).ToListAsync();
         }
 
