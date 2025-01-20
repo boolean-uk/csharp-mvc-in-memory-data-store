@@ -57,11 +57,10 @@ namespace exercise.wwwapi.Repository
         public async Task<Product?> UpdateProduct(int id, Product_edit dto)
         {
             var product = await GetProduct(id);
-            //Product_create createDto = new Product_create();
             product.price     = dto.price    ?? product.price;
             product.category  = dto.category ?? product.category;
             product.name      = dto.name     ?? product.name;
-            //return await CreateProduct(createDto);
+
             await _context.SaveChangesAsync();
             return product;
         }
