@@ -24,14 +24,6 @@ public class ProductRepository : IProductRepository
         {
             return new ProductResponse("Conflict");
         }
-        int id = 0;
-        try
-        {
-            id = _db.Product.Max(prod => prod.Id);
-        }
-        catch
-        {
-        }
         
         await _db.Product.AddAsync(product);
         await _db.SaveChangesAsync();
@@ -123,11 +115,11 @@ public class ProductRepository : IProductRepository
             response = new ProductResponse("Conflict");
         }
 
-        if (prodPut.Name != null)
+        if (prodPut.Name != null && prodPut.Name != "")
         {
             prod.Name = prodPut.Name;
         }
-        if (prodPut.Category != null)
+        if (prodPut.Category != null && prodPut.Category != "")
         {
             prod.Category = prodPut.Category;
         }

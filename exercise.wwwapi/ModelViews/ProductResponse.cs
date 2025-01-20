@@ -11,12 +11,14 @@ public class ProductResponse
     public string? Name {get;set;}
     public string? Category {get;set;}
     public decimal? Price {get;set;}
+    public int? Id {get; set;}
 
     public ProductResponse(Product prod)
     {
         Name = prod.Name;
         Category = prod.Category;
         Price = prod.Price;
+        //Id = prod.Id; //Used for testing purposes
     }
 
     public ProductResponse(string status)
