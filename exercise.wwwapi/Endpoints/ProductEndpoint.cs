@@ -1,6 +1,7 @@
 ﻿using exercise.wwwapi.Dto;
 using exercise.wwwapi.Models;
 using exercise.wwwapi.Repositories;
+using exercise.wwwapi.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace exercise.wwwapi.Endpoints
@@ -13,8 +14,8 @@ namespace exercise.wwwapi.Endpoints
 
             products.MapGet("", GetProducts);
             products.MapGet("{id}", GetProduct);
-            products.MapPost("", AddProduct);
-            products.MapPut("{id}", UpdateProduct);
+            products.MapPost("", AddProduct).AddEndpointFilter<ValidationFilter<ProductDto>>();
+            products.MapPut("{id}", UpdateProduct).AddEndpointFilter<ValidationFilter<ProductDto>>();
             products.MapDelete("{id}", DeleteProduct);
         }
 
