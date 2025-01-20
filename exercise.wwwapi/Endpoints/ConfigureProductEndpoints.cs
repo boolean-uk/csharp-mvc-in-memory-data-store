@@ -1,4 +1,6 @@
-﻿using exercise.wwwapi.ViewModels;
+﻿using System.Diagnostics;
+using System.Text.Json;
+using exercise.wwwapi.ViewModels;
 using genericapi.api.Models;
 using genericapi.api.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +23,18 @@ namespace exercise.wwwapi.Endpoints
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public static async Task<IResult> GetProducts(IRepository<Product, Guid> repository)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> GetProducts(IRepository<Product, Guid> repository, string? category)
         {
             try
             {
-                return TypedResults.Ok(await repository.GetAll());
+                var result = await repository.GetAll();
+                if (string.IsNullOrEmpty(category))
+                    return TypedResults.Ok(result);
+                result = result.Where(x => x.Category.ToLower() == category.ToLower());
+                if (!result.Any()) return TypedResults.NotFound(new {Message = "No products of the provided category was found"});
+                return TypedResults.Ok(result);
+
             }
             catch (Exception ex)
             {
@@ -58,6 +67,10 @@ namespace exercise.wwwapi.Endpoints
         {
             try
             {
+                var products = await repository.GetAll();
+                if (products.Any(p => p.Name.ToLower() == entity.Name.ToLower()))
+                    return TypedResults.BadRequest(new { Message =  $"Product {entity.Name} already exists!" });
+
                 Product product = await repository.Add(new Product { Name = entity.Name, Category = entity.Category, Price = entity.Price });
                 return TypedResults.Created($"/{Path}/{product.Id}", product);
             }
@@ -73,6 +86,9 @@ namespace exercise.wwwapi.Endpoints
         {
             try
             {
+                var products = await repository.GetAll();
+                if (entity.Name != null && products.Any(p => p.Name.ToLower() == entity.Name.ToLower()))
+                    return TypedResults.BadRequest(new { Message = $"Product {entity.Name} already exists!" });
                 Product product = await repository.Get(id);
                 if (entity.Name != null) product.Name = entity.Name;
                 if (entity.Category != null) product.Category = entity.Category;
@@ -80,6 +96,9 @@ namespace exercise.wwwapi.Endpoints
 
                 product = await repository.Update(product);
                 return TypedResults.Created($"/{Path}/{product.Id}", product);
+            } catch (ArgumentException ex)
+            {
+                return TypedResults.NotFound(new { ex.Message });
             }
             catch (Exception ex)
             {
