@@ -1,4 +1,13 @@
+using exercise.wwwapi.DB;
+using exercise.wwwapi.Endpoints;
+using exercise.wwwapi.Models;
+using exercise.wwwapi.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+builder.Services.AddDbContext<ProductContext>(o => o.UseInMemoryDatabase("bagelDB"));
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -16,5 +25,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.Run();
+app.ConfigureEndpoints();
 
+app.Run();
