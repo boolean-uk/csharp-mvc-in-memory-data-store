@@ -1,6 +1,8 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
+
 public class Product
 {
+    [Key]
     public Guid UUID { get; set; }
     public string Name { get; set; }
     public string Category { get; set; }

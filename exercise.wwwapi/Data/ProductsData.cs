@@ -1,53 +1,69 @@
-﻿
+﻿using Microsoft.EntityFrameworkCore;
+using exercise.wwwapi.Data;
+
 public class ProductsData
 {
-    private List<Product> _products = new List<Product>() 
-    {
-        new Product("Bagel", "Food", 1),
-        new Product("Coffee", "Drink", 2)
-    };
+    private readonly DataContext _db;
 
-    public Product Add(Product product)
+    public ProductsData(DataContext db)
     {
-        _products.Add(product);
+        _db = db;
+    }
+
+    public async Task<Product> AddAsync(Product product)
+    {
+        _db.Products.Add(product);
+        await _db.SaveChangesAsync();
         return product;
     }
 
-    public List<Product> GetAll()
+    public async Task<List<Product>> GetAllAsync()
     {
-        return _products.ToList();
+        return await _db.Products.ToListAsync();
     }
 
-    public Product Get(Guid UUID)
+    public async Task<Product> GetAsync(Guid UUID)
     {
-        return _products.FirstOrDefault(p => p.UUID == UUID);
+        return await _db.Products.FirstOrDefaultAsync(p => p.UUID == UUID);
     }
 
-    public Product Update(Guid UUID, string? name, string? category, int? price)
+    public async Task<Product> UpdateAsync(Guid UUID, string? name, string? category, int? price)
     {
-        Product product = _products.FirstOrDefault(p => p.UUID == UUID);
-        if (!string.IsNullOrEmpty(name))
-        {
-            product.Name = name;
-        }
-        if (!string.IsNullOrEmpty(category))
-        {
-            product.Category = category;
-        }
-        if (price != null && price != product.Price && price > 0)
-        {
-            product.Price = (int)price;
-        }
-        return product;
-    }
-
-    public bool Delete(Guid UUID)
-    {
-        Product product = _products.FirstOrDefault(p => p.UUID == UUID);
+        Product product = await _db.Products.FirstOrDefaultAsync(p => p.UUID == UUID);
         if (product != null)
         {
-            return _products.Remove(product);
+            if (!string.IsNullOrEmpty(name))
+            {
+                product.Name = name;
+            }
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                product.Category = category;
+            }
+
+            if (price != null && price != product.Price && price > 0)
+            {
+                product.Price = (int)price;
+            }
+
+            await _db.SaveChangesAsync();
         }
+
+        return product;
+    }
+
+    public async Task<bool> DeleteAsync(Guid UUID)
+    {
+        Product product = await _db.Products.FirstOrDefaultAsync(p => p.UUID == UUID);
+
+        if (product != null)
+        {
+            _db.Products.Remove(product);
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
         return false;
     }
 }

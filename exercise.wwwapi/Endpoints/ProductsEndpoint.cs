@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-public static class ProductsEndpoint
+﻿public static class ProductsEndpoint
 {
     public static void ConfigureProductsEndpoint(this WebApplication app)
     {
@@ -13,8 +11,6 @@ public static class ProductsEndpoint
         products.MapPut("/{id}", Update);
     }
 
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public static async Task<IResult> Add(ProductsRepository productsRepository, string name, string category, string? price)
     {
         if (string.IsNullOrEmpty(price) || !int.TryParse(price, out int parsedPrice))
@@ -27,32 +23,30 @@ public static class ProductsEndpoint
             return Results.BadRequest($"Price must be a positive value, not '{parsedPrice}'!");
         }
 
-        List<Product> products = productsRepository.GetAll().Where(p => p.Name.ToLower() == name.ToLower()).ToList();
-        if (products.Count > 0)
+        List<Product> products = await productsRepository.GetAllAsync();
+        if (products.Any(p => p.Name.ToLower() == name.ToLower()))
         {
             return Results.BadRequest($"Already a product with name '{name}'!");
         }
 
         Product product = new Product(name, category, parsedPrice);
 
-        productsRepository.Add(product);
+        await productsRepository.AddAsync(product);
 
         return Results.Created($"https://localhost:7010/products/{product.UUID}", product);
     }
 
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> GetAll(ProductsRepository productsRepository, string? category)
     {
         List<Product> products;
         if (!string.IsNullOrEmpty(category))
         {
-            products = productsRepository.GetAll().Where(p => p.Category.ToLower() == category.ToLower()).ToList();
+            products = await productsRepository.GetAllAsync();
+            products = products.Where(p => p.Category.ToLower() == category.ToLower()).ToList();
         }
         else
         {
-            products = productsRepository.GetAll();
+            products = await productsRepository.GetAllAsync();
         }
 
         if (products.Count > 0)
@@ -61,35 +55,29 @@ public static class ProductsEndpoint
         }
         else
         {
-            return Results.NotFound($"No products found in category '{category}'.");
+            return Results.NotFound($"No products found in category '{category}' or no products found.");
         }
     }
 
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> Get(ProductsRepository productsRepository, Guid UUID)
     {
-        Product product = productsRepository.Get(UUID);
+        Product product = await productsRepository.GetAsync(UUID);
         if (product != null)
         {
             return Results.Ok(product);
         }
         else
         {
-            return Results.NotFound($"No products found with UUID '{UUID}'.");
+            return Results.NotFound($"No products found with UUID '{UUID}'");
         }
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> Update(ProductsRepository productsRepository, Guid UUID, string? name, string? category, string? price)
     {
-        Product product = productsRepository.Get(UUID);
+        Product product = await productsRepository.GetAsync(UUID);
         if (product == null)
         {
-            return Results.NotFound($"No products found with UUID '{UUID}'.");
+            return Results.NotFound($"No products found with UUID '{UUID}'");
         }
 
         if (!string.IsNullOrEmpty(price))
@@ -113,14 +101,14 @@ public static class ProductsEndpoint
 
         if (!string.IsNullOrWhiteSpace(name))
         {
-            List<Product> products = productsRepository.GetAll().Where(p => p.Name.ToLower() == name.ToLower()).ToList();
-            if (products.Count > 0)
+            List<Product> products = await productsRepository.GetAllAsync();
+            if (products.Any(p => p.Name.ToLower() == name.ToLower()))
             {
                 return Results.BadRequest($"Already a product with name '{name}'!");
             }
         }
 
-        Product updatedProduct = productsRepository.Update(UUID, name, category, price != null ? Convert.ToInt32(price) : product.Price);
+        Product updatedProduct = await productsRepository.UpdateAsync(UUID, name, category, price != null ? Convert.ToInt32(price) : product.Price);
 
         if (updatedProduct != null)
         {
@@ -130,18 +118,14 @@ public static class ProductsEndpoint
         return Results.BadRequest();
     }
 
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> Delete(ProductsRepository productsRepository, Guid UUID)
     {
-        Product product = productsRepository.Get(UUID);
+        Product product = await productsRepository.GetAsync(UUID);
         if (product != null)
         {
-            productsRepository.Delete(UUID);
+            await productsRepository.DeleteAsync(UUID);
             return Results.Ok(new { Status = "Deleted", Product = product });
         }
-        return Results.NotFound($"No products found with UUID '{UUID}'.");
+        return Results.NotFound($"No products found with UUID '{UUID}'");
     }
-
 }
