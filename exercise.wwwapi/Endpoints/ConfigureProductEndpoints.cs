@@ -34,6 +34,7 @@ namespace exercise.wwwapi.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> GetProduct(IRepository<Product, Guid> repository, Guid id)
         {
