@@ -1,47 +1,51 @@
-﻿using exercise.wwwapi.Models;
+﻿using exercise.wwwapi.Data;
+using exercise.wwwapi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace exercise.wwwapi.Repository
 {
     public class Repository : IRepository
     {
-        public IEnumerable<Product> GetProducts()
+        private DataContext _db;
+
+        public Repository(DataContext db)
         {
-            return ProductData.Products;
+            _db = db;
+        }
+        public async Task<IEnumerable<Product>> GetProducts()
+        {
+            return await _db.Products.ToListAsync();
         }
 
-        public Product GetProduct(int id)
+        public async Task<Product> GetProduct(int id)
         {
-            var product = ProductData.Products.FirstOrDefault(prod => prod.Id == id);
+            return await _db.Products.FindAsync(id);
+        }
+
+        public async Task<Product> AddProduct(Product model)
+        {
+            await _db.Products.AddAsync(model);
+            await _db.SaveChangesAsync();
+            return model;
+        }
+
+        public async Task<Product> UpdateProduct(int id, ProductPut model)
+        {
+            Product product = await _db.Products.FindAsync(id);
+            if (product == null) return null;
+            if (model.name != null) product.name = model.name;
+            if (model.category != null) product.category = model.category;
+            if (model.price != null) product.price = (int)model.price;
+            await _db.SaveChangesAsync();
             return product;
         }
 
-        public Product AddProduct(ProductPost model)
+        public async Task<bool> DeleteProduct(int id)
         {
-            int nextId = ProductData.Products.Max(prod => prod.Id) + 1;
-            Product product = new Product()
-            {
-                Id = nextId,
-                name = model.name,
-                category = model.category,
-                price = (int)model.price
-            };
-            ProductData.Products.Add(product);
-            return product;
-        }
-
-        public Product UpdateProduct(int id, ProductPut model)
-        {
-            var target = ProductData.Products.FirstOrDefault(prod => prod.Id == id);
-            if (target == null) return target;                                          //  Handle Not Found
-            if (model.name != null) target.name = model.name;
-            if (model.category != null) target.category = model.category;
-            if (model.price != null) target.price = (int)model.price;
-            return target;
-        }
-
-        public bool DeleteProduct(int id)
-        {
-            return ProductData.Products.RemoveAll(prod => prod.Id == id) > 0 ? true : false;
+            var target = await _db.Products.FindAsync(id);
+            _db.Remove(target);
+            await _db.SaveChangesAsync();
+            return true;
         }
     }
 }

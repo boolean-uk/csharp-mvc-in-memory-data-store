@@ -2,7 +2,9 @@
 using System.Xml.Linq;
 using exercise.wwwapi.Models;
 using exercise.wwwapi.Repository;
+using exercise.wwwapi.Validators;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace exercise.wwwapi.Endpoints
 {
@@ -13,7 +15,7 @@ namespace exercise.wwwapi.Endpoints
             var products = app.MapGroup("/products");
             products.MapGet("/", GetProducts);
             products.MapGet("/{id}", GetProduct);
-            products.MapPost("/", AddProduct);
+            products.MapPost("/", AddProduct).AddEndpointFilter<ValidationFilter<ProductPost>>();
             products.MapPut("/{id}", UpdateProduct);
             products.MapDelete("/{id}", DeleteProduct);
         }
@@ -22,7 +24,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         private static async Task<IResult> GetProducts(IRepository repository)
         {
-            var result = repository.GetProducts();
+            var result = await repository.GetProducts();
             if (result == null) return Results.NotFound();
             return Results.Ok(result);
         }
@@ -31,7 +33,7 @@ namespace exercise.wwwapi.Endpoints
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         private static async Task<IResult> GetProduct(IRepository repository, int id)
         {
-            var result = repository.GetProduct(id);
+            var result = await repository.GetProduct(id);
             if (result == null) return Results.NotFound(new { message = "Not found" });
             return Results.Ok(result);
         }
@@ -41,7 +43,13 @@ namespace exercise.wwwapi.Endpoints
         private static async Task<IResult> AddProduct(IRepository repository, ProductPost model)
         {
             if (model.name == null || model.category == null || model.price == null) return Results.BadRequest(new { message = "Not found" });
-            Product product = repository.AddProduct(model);
+            Product product = new Product()
+            {
+                name = model.name,
+                category = model.category,
+                price = (int)model.price
+            };
+            product = await repository.AddProduct(product);
             return Results.Created($"https://localhost:7009/products/{product.Id}", product);
         }
 
@@ -53,7 +61,7 @@ namespace exercise.wwwapi.Endpoints
             try
             {
                 if (model.name == null && model.category == null && model.price == null) return Results.BadRequest(new { message = "Not found" });
-                Product product = repository.UpdateProduct(id, model);
+                Product product = await repository.UpdateProduct(id, model);
                 if (product == null) return Results.NotFound(new { message = "Not found" });
                 return Results.Created($"https://localhost:7009/products/{product.Id}", product);
             }
@@ -69,8 +77,8 @@ namespace exercise.wwwapi.Endpoints
         {
             try
             {
-                var target = repository.GetProduct(id);
-                if (repository.DeleteProduct(id)) return Results.Ok(new {id = target.Id, name = target.name, category = target.category, price = target.price });
+                var target = await repository.GetProduct(id);
+                if (await repository.DeleteProduct(id)) return Results.Ok(new { id = target.Id, name = target.name, category = target.category, price = target.price });
                 return Results.NotFound(new { message = "Not found" });
             }
             catch (Exception ex)
