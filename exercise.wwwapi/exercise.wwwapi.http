@@ -1,6 +1,67 @@
 @exercise.wwwapi_HostAddress = http://localhost:5057
 
-GET {{exercise.wwwapi_HostAddress}}/weatherforecast/
+GET {{exercise.wwwapi_HostAddress}}/products/
+Accept: application/json
+
+###
+
+
+GET {{exercise.wwwapi_HostAddress}}/products/1
+Accept: application/json
+
+###
+
+POST {{exercise.wwwapi_HostAddress}}/products
+Content-Type: application/json
+{
+  "name": "CD",
+  "category": "Entertainment", 
+  "price": 7 
+}
+###
+
+POST {{exercise.wwwapi_HostAddress}}/products
+Content-Type: application/json
+{
+  "name": "DVD",
+  "category": "Entertainment", 
+  "price": 9 
+}
+###
+
+POST {{exercise.wwwapi_HostAddress}}/products
+Content-Type: application/json
+{
+  "name": "Apple",
+  "category": "Fruit", 
+  "price": 1
+}
+###
+
+POST {{exercise.wwwapi_HostAddress}}/products
+Content-Type: application/json
+{
+  "name": "Carrots",
+  "category": "Vegetable", 
+  "price": 2
+}
+###
+
+GET {{exercise.wwwapi_HostAddress}}/products/2
+Accept: application/json
+
+###
+
+PUT {{exercise.wwwapi_HostAddress}}/products/4
+Content-Type: application/json
+{
+  "name": "DVD",
+  "category": "Entertainment", 
+  "price": 10 
+}
+###
+
+DELETE {{exercise.wwwapi_HostAddress}}/products/1
 Accept: application/json
 
 ###
