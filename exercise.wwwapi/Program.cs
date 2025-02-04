@@ -1,6 +1,10 @@
 using exercise.wwwapi.Endpoints;
 using exercise.wwwapi.Models;
 using exercise.wwwapi.Repository;
+using exercise.wwwapi.Validators;
+using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using exercise.wwwapi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("Products"));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(ProductPostValidator));
 
 var app = builder.Build();
 
@@ -20,8 +26,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-ProductData.Initialize();
 
 app.ConfigureProductEndpoints();
 

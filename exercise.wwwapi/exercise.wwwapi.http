@@ -6,7 +6,7 @@ Accept: application/json
 ###
 
 
-GET {{exercise.wwwapi_HostAddress}}/products/Java
+GET {{exercise.wwwapi_HostAddress}}/products/1
 Accept: application/json
 
 ###
@@ -20,12 +20,39 @@ Content-Type: application/json
 }
 ###
 
+POST {{exercise.wwwapi_HostAddress}}/products
+Content-Type: application/json
+{
+  "name": "DVD",
+  "category": "Entertainment", 
+  "price": 9 
+}
+###
+
+POST {{exercise.wwwapi_HostAddress}}/products
+Content-Type: application/json
+{
+  "name": "Apple",
+  "category": "Fruit", 
+  "price": 1
+}
+###
+
+POST {{exercise.wwwapi_HostAddress}}/products
+Content-Type: application/json
+{
+  "name": "Carrots",
+  "category": "Vegetable", 
+  "price": 2
+}
+###
+
 GET {{exercise.wwwapi_HostAddress}}/products/2
 Accept: application/json
 
 ###
 
-PUT {{exercise.wwwapi_HostAddress}}/products/7
+PUT {{exercise.wwwapi_HostAddress}}/products/4
 Content-Type: application/json
 {
   "name": "DVD",
